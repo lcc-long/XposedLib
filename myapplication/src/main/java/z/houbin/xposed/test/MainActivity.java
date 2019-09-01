@@ -24,6 +24,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void reboot(View view) {
-        Util.restartPackage(getApplicationContext(),"com.tencent.mobileqq");
+        Util.restartPackage(getApplicationContext(),"com.dingriwangeud9.asb");
     }
 }

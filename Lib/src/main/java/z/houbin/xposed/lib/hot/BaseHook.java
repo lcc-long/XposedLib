@@ -4,30 +4,27 @@ import android.app.Activity;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodReplacement;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import z.houbin.xposed.lib.Logs;
 
 public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
-    public static String TARGET_PACKAGE = "";
-    public static String LOCALE_PACKAGE = "";
     public Activity focusActivity;
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        startHotXPosed(loadPackageParam);
+        //startHotXPosed(loadPackageParam);
     }
 
-    protected void startHotXPosed(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+    protected void startHotXPosed(Class clz, XC_LoadPackage.LoadPackageParam loadPackageParam,String localePackage,String targetPackage) {
         if (!loadPackageParam.packageName.equals("android")) {
-            if (loadPackageParam.packageName.equals(TARGET_PACKAGE) && loadPackageParam.processName.equals(TARGET_PACKAGE)) {
+            if (loadPackageParam.packageName.equals(targetPackage) && loadPackageParam.processName.equals(targetPackage)) {
                 try {
-                    HotXPosed.hook2(this, loadPackageParam, LOCALE_PACKAGE);
+                    HotXPosed.hook(clz, loadPackageParam, localePackage);
                 } catch (Exception e) {
                     Logs.e(e);
                 }
-            } else if (loadPackageParam.packageName.equals(LOCALE_PACKAGE)) {
+            } else if (loadPackageParam.packageName.equals(localePackage)) {
                 XposedHelpers.findAndHookMethod("z.houbin.xposed.lib.Util", loadPackageParam.classLoader, "isHook", XC_MethodReplacement.returnConstant(true));
             }
         }

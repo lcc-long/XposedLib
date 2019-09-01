@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -13,14 +14,12 @@ import z.houbin.xposed.lib.Util;
 import z.houbin.xposed.lib.hot.BaseHook;
 
 public class MainHook extends BaseHook {
-    static {
-        LOCALE_PACKAGE = "z.houbin.xposed.test";
-        TARGET_PACKAGE = "com.tencent.mobileqq";
-    }
+    private final String LOCALE_PACKAGE = "z.houbin.xposed.test";
+    private final String TARGET_PACKAGE = "com.dingriwangeud9.asb";
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        startHotXPosed(loadPackageParam);
+        startHotXPosed(MainHook.class, loadPackageParam, LOCALE_PACKAGE, TARGET_PACKAGE);
     }
 
     @Override

@@ -10,8 +10,8 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import z.houbin.xposed.lib.shell.Shell;
 
-public class HotXPosed {
-    public static void hook(Class clazz, XC_LoadPackage.LoadPackageParam lpparam, String packageName) throws Exception {
+class HotXPosed {
+    static void hook(Class clazz, XC_LoadPackage.LoadPackageParam lpparam, String packageName) throws Exception {
         File apkFile = getApkFile(packageName);
         if (apkFile == null || !apkFile.exists()) {
             XposedBridge.log("apk file not found,hot load :" + packageName);
@@ -19,15 +19,6 @@ public class HotXPosed {
         }
         PathClassLoader classLoader = new PathClassLoader(apkFile.getAbsolutePath(), lpparam.getClass().getClassLoader());
         XposedHelpers.callMethod(classLoader.loadClass(clazz.getName()).newInstance(), "dispatch", lpparam);
-    }
-
-    public static void hook2(BaseHook clazz, XC_LoadPackage.LoadPackageParam lpparam, String packageName) throws Exception {
-        File apkFile = getApkFile(packageName);
-        if (apkFile == null || !apkFile.exists()) {
-            XposedBridge.log("apk file not found,hot load2 :" + packageName);
-            return;
-        }
-        clazz.dispatch(lpparam);
     }
 
     private static File getApkFile(String packageName) {
