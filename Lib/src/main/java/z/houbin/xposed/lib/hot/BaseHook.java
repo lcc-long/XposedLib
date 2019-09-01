@@ -18,7 +18,7 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
 
     protected void startHotXPosed(Class clz, XC_LoadPackage.LoadPackageParam loadPackageParam,String localePackage,String targetPackage) {
         if (!loadPackageParam.packageName.equals("android")) {
-            if (loadPackageParam.packageName.equals(targetPackage) && loadPackageParam.processName.equals(targetPackage)) {
+            if (loadPackageParam.packageName.equals(targetPackage)) {
                 try {
                     HotXPosed.hook(clz, loadPackageParam, localePackage);
                 } catch (Exception e) {
