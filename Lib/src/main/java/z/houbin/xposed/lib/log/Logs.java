@@ -1,4 +1,4 @@
-package z.houbin.xposed.lib;
+package z.houbin.xposed.lib.log;
 
 import android.util.Log;
 
@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XC_MethodHook;
+import z.houbin.xposed.lib.Config;
 
 /**
  * 日志工具
@@ -13,12 +14,25 @@ import de.robv.android.xposed.XC_MethodHook;
 public class Logs {
     public static String TAG = "Xposed.Lib";
 
+    public static void i(String text) {
+        Log.i(TAG, text);
+    }
+
+    public static void i(String tag, String text) {
+        if (tag == null) {
+            tag = TAG;
+        }
+        Log.i(tag, text);
+    }
+
     public static void e(String text) {
         Log.e(TAG, text);
+        Config.writeLog(text);
     }
 
     public static void e(String tag, String text) {
         Log.e(TAG + " - " + tag, text);
+        Config.writeLog(tag + ": " + text);
     }
 
     /**
@@ -27,11 +41,11 @@ public class Logs {
      * @param e 异常
      */
     public static void e(Throwable e) {
-        Log.e(TAG, Log.getStackTraceString(e));
+        e(TAG, Log.getStackTraceString(e));
     }
 
     public static void e(String tag, Throwable e) {
-        Log.e(TAG + " - " + tag, Log.getStackTraceString(e));
+        e(TAG + " - " + tag, Log.getStackTraceString(e));
     }
 
     /**

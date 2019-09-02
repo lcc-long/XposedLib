@@ -6,7 +6,8 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import z.houbin.xposed.lib.Logs;
+import z.houbin.xposed.lib.Config;
+import z.houbin.xposed.lib.log.Logs;
 
 public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
     public Activity focusActivity;
@@ -16,7 +17,7 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
         //startHotXPosed(loadPackageParam);
     }
 
-    protected void startHotXPosed(Class clz, XC_LoadPackage.LoadPackageParam loadPackageParam,String localePackage,String targetPackage) {
+    protected void startHotXPosed(Class clz, XC_LoadPackage.LoadPackageParam loadPackageParam, String localePackage, String targetPackage) {
         if (!loadPackageParam.packageName.equals("android")) {
             if (loadPackageParam.packageName.equals(targetPackage)) {
                 try {
@@ -32,6 +33,6 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
 
     @Override
     public void dispatch(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-
+        Config.init(loadPackageParam.packageName);
     }
 }

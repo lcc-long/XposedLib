@@ -2,6 +2,11 @@
     package="z.houbin.xposed.lib">
 
     <application>
+        <activity
+            android:name=".log.LogActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+
         <meta-data
             android:name="xposedmodule"
             android:value="true" />

@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.shell.Shell;
 
 public class Util {

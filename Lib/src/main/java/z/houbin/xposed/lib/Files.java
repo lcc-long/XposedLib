@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import z.houbin.xposed.lib.log.Logs;
+
 public class Files {
 
     /**
@@ -51,7 +53,7 @@ public class Files {
             RandomAccessFile randomFile = new RandomAccessFile(file.getPath(), "rw");
             long fileLength = randomFile.length();
             randomFile.seek(fileLength);
-            randomFile.writeBytes(text + "\r\n");
+            randomFile.write((text + "\r\n").getBytes());
             randomFile.close();
         } catch (Exception e) {
             Logs.e(e);

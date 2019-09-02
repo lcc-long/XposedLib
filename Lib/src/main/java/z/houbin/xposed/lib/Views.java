@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import z.houbin.xposed.lib.log.Logs;
+
 public class Views {
     /**
      * android.widget.LinearLayout{e392b56 V.E...... ......I. 0,0-0,0 #7f110e3e app:id/bxj}

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-import z.houbin.xposed.lib.Logs;
+import z.houbin.xposed.lib.log.Logs;
 
 public class SocketClient extends Thread {
     private Socket socket;
