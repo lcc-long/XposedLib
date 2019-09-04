@@ -56,7 +56,7 @@ public class Files {
             randomFile.write((text + "\r\n").getBytes());
             randomFile.close();
         } catch (Exception e) {
-            Logs.e(e);
+            e.printStackTrace();
         }
     }
 

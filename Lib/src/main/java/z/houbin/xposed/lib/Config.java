@@ -82,7 +82,6 @@ public class Config {
             Date d = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss  ", Locale.CHINA);
             Files.appendFile(new File(dir, "temp.log"), sdf.format(d) + log);
-            Files.writeFile(new File(dir, "aa.log"), sdf.format(d) + log);
         }
     }
 
