@@ -6,15 +6,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import z.houbin.xposed.lib.Config;
-import z.houbin.xposed.lib.Util;
 import z.houbin.xposed.lib.hot.BaseHook;
 import z.houbin.xposed.lib.log.Logs;
 
@@ -24,7 +19,7 @@ public class MainHook extends BaseHook {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        startHotXPosed(MainHook.class, loadPackageParam, LOCALE_PACKAGE, TARGET_PACKAGE);
+        startHotXPosed(MainHook.class, loadPackageParam, LOCALE_PACKAGE);
     }
 
     @Override
@@ -54,21 +49,8 @@ public class MainHook extends BaseHook {
                         Logs.e("onActivityResumed", activity.getLocalClassName());
                         if (focusActivity == null) {
                             focusActivity = activity;
-                            Util.showVersion(activity);
-                            JSONObject json = Config.readConfig();
-                            if (json != null) {
-                                try {
-                                    Toast.makeText(activity, "time " + json.getLong("time"), Toast.LENGTH_SHORT).show();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    json.put("count", 1);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                Config.saveConfig(json);
-                            }
+                            //Util.showVersion(activity);
+                            Toast.makeText(activity, "resume " + activity, Toast.LENGTH_SHORT).show();
                         } else {
                             focusActivity = activity;
                         }

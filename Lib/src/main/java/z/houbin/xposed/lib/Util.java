@@ -3,6 +3,7 @@ package z.houbin.xposed.lib;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Looper;
@@ -307,6 +308,21 @@ public class Util {
             Toast.makeText(activity, String.format(Locale.CHINA, "%s 启动(%s)", appName, packageInfo.versionName), Toast.LENGTH_LONG).show();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static boolean isSystemApp(Context context, String packageName) {
+        PackageManager pm = context.getPackageManager();
+        if (packageName != null) {
+            try {
+                PackageInfo info = pm.getPackageInfo(packageName, 0);
+                return (info != null) && (info.applicationInfo != null) &&
+                        ((info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 }

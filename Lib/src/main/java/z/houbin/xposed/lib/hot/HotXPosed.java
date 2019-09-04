@@ -8,17 +8,23 @@ import dalvik.system.PathClassLoader;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.shell.Shell;
 
-class HotXPosed {
-    static void hook(Class clazz, XC_LoadPackage.LoadPackageParam lpparam, String packageName) throws Exception {
-        File apkFile = getApkFile(packageName);
-        if (apkFile == null || !apkFile.exists()) {
-            XposedBridge.log("apk file not found,hot load :" + packageName);
-            return;
+public class HotXPosed {
+
+    public static void hook(Class clazz, XC_LoadPackage.LoadPackageParam lpparam, String packageName) {
+        try {
+            File apkFile = getApkFile(packageName);
+            if (apkFile == null || !apkFile.exists()) {
+                XposedBridge.log("apk file not found,hot load :" + packageName);
+                return;
+            }
+            PathClassLoader classLoader = new PathClassLoader(apkFile.getAbsolutePath(), lpparam.getClass().getClassLoader());
+            XposedHelpers.callMethod(classLoader.loadClass(clazz.getName()).newInstance(), "dispatch", lpparam);
+        } catch (Exception e) {
+            Logs.e(e);
         }
-        PathClassLoader classLoader = new PathClassLoader(apkFile.getAbsolutePath(), lpparam.getClass().getClassLoader());
-        XposedHelpers.callMethod(classLoader.loadClass(clazz.getName()).newInstance(), "dispatch", lpparam);
     }
 
     private static File getApkFile(String packageName) {
