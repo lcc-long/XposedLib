@@ -8,7 +8,6 @@ import java.util.Vector;
  * HTTP响应对象
  */
 public class HttpResponse {
-
     public Map<String, List<String>> responseHeader;
     String urlString;
     int defaultPort;

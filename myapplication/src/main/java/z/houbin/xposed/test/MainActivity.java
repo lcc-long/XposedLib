@@ -7,7 +7,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import z.houbin.xposed.lib.Config;
+import z.houbin.xposed.lib.http.HttpRequest;
+import z.houbin.xposed.lib.http.HttpResponse;
 import z.houbin.xposed.lib.log.LogActivity;
 import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.Permissions;
@@ -40,6 +47,24 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Hook 失败", Toast.LENGTH_SHORT).show();
         }
+
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    URL u = new URL("http://www.baidu.com");
+                    HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+                    Logs.e("获取到实现类",conn.getClass().getCanonicalName().toString());
+
+                    HttpRequest request = new HttpRequest();
+                    HttpResponse response = request.sendGet("http://www.baidu.com");
+                    Logs.e(response.getContent());
+                } catch (Exception e) {
+                    Logs.e(e);
+                }
+            }
+        }.start();
     }
 
     public void reboot(View view) {

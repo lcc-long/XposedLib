@@ -19,7 +19,7 @@ public class MainHook extends BaseHook {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        startHotXPosed(MainHook.class, loadPackageParam, LOCALE_PACKAGE);
+        startHotXPosed(MainHook.class, loadPackageParam, LOCALE_PACKAGE, TARGET_PACKAGE);
     }
 
     @Override

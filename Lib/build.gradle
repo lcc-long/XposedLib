@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 7
-        versionName "0.7"
+        versionCode 8
+        versionName "0.8"
     }
 
     buildTypes {
@@ -25,4 +25,5 @@ dependencies {
     compileOnly files('libs/api-82.jar')
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation files('libs/lite-orm-1.9.2.jar')
 }
