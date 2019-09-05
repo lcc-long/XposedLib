@@ -27,12 +27,12 @@ public class Logs {
 
     public static void e(String text) {
         Log.e(TAG, text);
-        Config.writeLog(text);
+        //Config.writeLog(text);
     }
 
     public static void e(String tag, String text) {
         Log.e(TAG + " - " + tag, text);
-        Config.writeLog(tag + ": " + text);
+        //Config.writeLog(tag + ": " + text);
     }
 
     /**
