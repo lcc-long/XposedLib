@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -79,9 +80,16 @@ public class Config {
 
     public static void writeLog(String log) {
         if (isInit) {
-            Date d = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss  ", Locale.CHINA);
-            Files.appendFile(new File(dir, "temp.log"), sdf.format(d) + log);
+            Calendar cal = Calendar.getInstance(Locale.CHINA);
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH) + 1;
+            int day = cal.get(Calendar.DATE);
+            int hour = cal.get(Calendar.HOUR);
+            int min = cal.get(Calendar.MINUTE);
+            int sec = cal.get(Calendar.SECOND);
+
+            String time = String.format(Locale.CHINA, "%d-%d-%d %d:%d:%d  ", year, month, day, hour, min, sec);
+            Files.appendFile(new File(dir, "temp.log"), time + log);
         }
     }
 
