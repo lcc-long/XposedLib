@@ -88,8 +88,20 @@ public class Config {
             int min = cal.get(Calendar.MINUTE);
             int sec = cal.get(Calendar.SECOND);
 
-            String time = String.format(Locale.CHINA, "%d-%d-%d %d:%d:%d  ", year, month, day, hour, min, sec);
-            Files.appendFile(new File(dir, "temp.log"), time + log);
+            StringBuilder builder = new StringBuilder();
+            builder.append(year);
+            builder.append("-");
+            builder.append(month);
+            builder.append("-");
+            builder.append(day);
+            builder.append(" ");
+            builder.append(hour);
+            builder.append(":");
+            builder.append(min);
+            builder.append(":");
+            builder.append(sec);
+            builder.append(" ");
+            Files.appendFile(new File(dir, "temp.log"), builder.toString() + log);
         }
     }
 

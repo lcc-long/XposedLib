@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 super.run();
                 try {
-                    URL u = new URL("http://www.baidu.com");
+                    URL u = new URL("https://www.baidu.com");
                     HttpURLConnection conn = (HttpURLConnection) u.openConnection();
                     Logs.e("获取到实现类",conn.getClass().getCanonicalName().toString());
 
