@@ -23,7 +23,7 @@ public class HotXPosed {
             PathClassLoader classLoader = new PathClassLoader(apkFile.getAbsolutePath(), lpparam.getClass().getClassLoader());
             XposedHelpers.callMethod(classLoader.loadClass(clazz.getName()).newInstance(), "dispatch", lpparam);
         } catch (Exception e) {
-            Logs.e(e);
+            //Logs.e(e);
         }
     }
 
