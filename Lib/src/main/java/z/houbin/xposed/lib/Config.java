@@ -53,7 +53,7 @@ public class Config {
     public static JSONObject readJSON(String name) {
         String data = read(name);
         if (TextUtils.isEmpty(data)) {
-            return null;
+            return new JSONObject();
         } else {
             try {
                 return new JSONObject(data);

@@ -24,4 +24,22 @@
         android:layout_height="wrap_content"
         android:onClick="logs"
         android:text="日志" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="req1"
+        android:text="HttpUrlConnection 请求" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="req2"
+        android:text="OkHttp 请求" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="req3"
+        android:text="Rx 请求" />
 </LinearLayout>

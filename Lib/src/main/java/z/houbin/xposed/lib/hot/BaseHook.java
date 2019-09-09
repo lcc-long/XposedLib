@@ -7,7 +7,6 @@ import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import z.houbin.xposed.lib.Config;
-import z.houbin.xposed.lib.log.Logs;
 
 public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
     public Activity focusActivity;
@@ -23,7 +22,7 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
                 try {
                     HotXPosed.hook(clz, loadPackageParam, localePackage);
                 } catch (Exception e) {
-                    Logs.e(e);
+                    //Logs.e(e);
                 }
             } else if (loadPackageParam.packageName.equals(localePackage)) {
                 XposedHelpers.findAndHookMethod("z.houbin.xposed.lib.Util", loadPackageParam.classLoader, "isHook", XC_MethodReplacement.returnConstant(true));
@@ -39,7 +38,7 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
                 try {
                     HotXPosed.hook(clz, loadPackageParam, localePackage);
                 } catch (Exception e) {
-                    Logs.e(e);
+                    //Logs.e(e);
                 }
             }
         }
@@ -47,6 +46,6 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
 
     @Override
     public void dispatch(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        Config.init(loadPackageParam.packageName);
+        //Config.init(loadPackageParam.packageName);
     }
 }
