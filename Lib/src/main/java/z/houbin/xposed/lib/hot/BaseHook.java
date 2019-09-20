@@ -6,7 +6,6 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import z.houbin.xposed.lib.Config;
 
 public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
     public Activity focusActivity;

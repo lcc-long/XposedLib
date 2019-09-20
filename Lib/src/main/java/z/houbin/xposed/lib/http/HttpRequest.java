@@ -20,8 +20,8 @@ import java.util.zip.GZIPInputStream;
 public class HttpRequest {
 
     private String defaultContentEncoding;
-    private int connectTimeout = 1000;
-    private int readTimeout = 1000;
+    private int connectTimeout = 3000;
+    private int readTimeout = 3000;
 
     public HttpRequest() {
         this.defaultContentEncoding = Charset.defaultCharset().name();
