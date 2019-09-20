@@ -1,5 +1,7 @@
 package z.houbin.xposed.lib;
 
+import android.text.TextUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +15,9 @@ import java.util.Map;
 import z.houbin.xposed.lib.log.Logs;
 
 public class Https {
+    public static String sendGet(String url) {
+        return sendGet(url, "");
+    }
 
     /**
      * 向指定URL发送GET方法的请求
@@ -23,12 +28,14 @@ public class Https {
      */
     public static String sendGet(String url, HashMap<String, String> params) {
         StringBuilder builder = new StringBuilder();
-        for (String k : params.keySet()) {
-            String v = params.get(k);
-            builder.append(k);
-            builder.append("=");
-            builder.append(v);
-            builder.append("&");
+        if (!params.isEmpty()) {
+            for (String k : params.keySet()) {
+                String v = params.get(k);
+                builder.append(k);
+                builder.append("=");
+                builder.append(v);
+                builder.append("&");
+            }
         }
         builder.deleteCharAt(builder.length() - 1);
         return sendGet(url, builder.toString());
@@ -114,11 +121,13 @@ public class Https {
         StringBuilder result = new StringBuilder();
         BufferedReader in = null;
         try {
-            String urlNameString = "";
-            if (url.contains("?")) {
-                urlNameString = url + "&" + param;
-            } else {
-                urlNameString = url + "?" + param;
+            String urlNameString = String.valueOf(url);
+            if (!TextUtils.isEmpty(param)) {
+                if (url.contains("?")) {
+                    urlNameString = url + "&" + param;
+                } else {
+                    urlNameString = url + "?" + param;
+                }
             }
             URL realUrl = new URL(urlNameString);
             // 打开和URL之间的连接
@@ -185,7 +194,7 @@ public class Https {
      * @return 所代表远程资源的响应结果
      */
     public static String sendPost(String url, String param) {
-        return sendPost(url,null,param);
+        return sendPost(url, null, param);
     }
 
     /**
