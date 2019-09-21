@@ -100,8 +100,8 @@ public class HttpRequest {
     /**
      * 发送HTTP请求
      */
-    private HttpResponse send(String urlString, String method,
-                              Map<String, String> parameters, Map<String, String> headers)
+    public HttpResponse send(String urlString, String method,
+                             Map<String, String> parameters, Map<String, String> headers)
             throws IOException {
         HttpURLConnection urlConnection = null;
 
@@ -134,7 +134,7 @@ public class HttpRequest {
                 urlConnection.addRequestProperty(key, headers.get(key));
             }
 
-        if (method.equalsIgnoreCase("POST") && parameters != null) {
+        if (!method.equalsIgnoreCase("GET") && parameters != null) {
             StringBuffer param = new StringBuffer();
             int i = 0;
             for (String key : parameters.keySet()) {
