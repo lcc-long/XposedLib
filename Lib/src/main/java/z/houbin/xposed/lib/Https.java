@@ -50,7 +50,7 @@ public class Https {
      * @return URL 所代表远程资源的响应结果
      */
     public static String sendGet(String url, HashMap<String, String> headers, HashMap<String, String> params) {
-        Logs.e("sendGet", url);
+        Logs.i("sendGet", url);
         StringBuilder result = new StringBuilder();
         BufferedReader in = null;
         try {
@@ -184,7 +184,7 @@ public class Https {
      * @return URL 所代表远程资源的响应结果
      */
     public static String sendGet(String url, String param) {
-        Logs.e("sendGet", url + param);
+        Logs.i("sendGet", url + param);
         StringBuilder result = new StringBuilder();
         BufferedReader in = null;
         try {
@@ -272,7 +272,7 @@ public class Https {
      * @return 所代表远程资源的响应结果
      */
     public static String sendPost(String url, HashMap<String, String> headers, String param) {
-        Logs.e("sendPost", url + param);
+        Logs.i("sendPost", url + param);
         PrintWriter out = null;
         BufferedReader in = null;
         StringBuilder result = new StringBuilder();
