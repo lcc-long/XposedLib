@@ -8,8 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import z.houbin.xposed.lib.log.Logs;
-
 public class Files {
 
     /**
