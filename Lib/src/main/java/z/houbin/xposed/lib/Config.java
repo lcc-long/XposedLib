@@ -103,7 +103,40 @@ public class Config {
         }
     }
 
+    public static void writeLogFirst(String log) {
+        if (isInit) {
+            Calendar cal = Calendar.getInstance(Locale.CHINA);
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH) + 1;
+            int day = cal.get(Calendar.DATE);
+            int hour = cal.get(Calendar.HOUR);
+            int min = cal.get(Calendar.MINUTE);
+            int sec = cal.get(Calendar.SECOND);
+
+            StringBuilder builder = new StringBuilder();
+            builder.append(year);
+            builder.append("-");
+            builder.append(month);
+            builder.append("-");
+            builder.append(day);
+            builder.append(" ");
+            builder.append(hour);
+            builder.append(":");
+            builder.append(min);
+            builder.append(":");
+            builder.append(sec);
+            builder.append(" ");
+            Files.appendFileFirst(new File(dir, "temp.log"), builder.toString() + log);
+        }
+    }
+
     public static String readLog() {
-        return Files.readFile(new File(dir, "temp.log"));
+        String log = "";
+        try {
+            log = Files.readFile(new File(dir, "temp.log"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return log;
     }
 }

@@ -59,6 +59,30 @@ public class Files {
     }
 
     /**
+     * 续写文件
+     *
+     * @param file 文件
+     * @param text 内容
+     */
+    public static void appendFileFirst(File file, String text) {
+        try {
+            if (!file.exists()) {
+                if (!file.getParentFile().exists()) {
+                    boolean r = file.getParentFile().mkdirs();
+                }
+                boolean r = file.createNewFile();
+            }
+            RandomAccessFile randomFile = new RandomAccessFile(file.getPath(), "rw");
+            long fileLength = randomFile.length();
+            randomFile.seek(0);
+            randomFile.write((text + "\r\n").getBytes());
+            randomFile.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 读文件
      *
      * @param file 文件
