@@ -72,10 +72,12 @@ public class Files {
                 }
                 boolean r = file.createNewFile();
             }
+            String oldContent = readFile(file);
             RandomAccessFile randomFile = new RandomAccessFile(file.getPath(), "rw");
             long fileLength = randomFile.length();
             randomFile.seek(0);
             randomFile.write((text + "\r\n").getBytes());
+            randomFile.write(oldContent.getBytes());
             randomFile.close();
         } catch (Exception e) {
             e.printStackTrace();

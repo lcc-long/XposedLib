@@ -14,7 +14,7 @@ import z.houbin.xposed.lib.log.Logs;
 
 public class Config {
     private static File dir = new File(Environment.getExternalStorageDirectory(), "/.xposed.lib/");
-    private static boolean isInit;
+    public static boolean isInit;
 
     public static void init(File configDir) {
         Config.dir = configDir;

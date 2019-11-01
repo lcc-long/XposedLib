@@ -1,6 +1,7 @@
 package z.houbin.xposed.lib.hot;
 
 import android.app.Activity;
+import android.widget.Toast;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -9,6 +10,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
     public Activity focusActivity;
+    protected XC_LoadPackage.LoadPackageParam packageParam;
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
@@ -46,5 +48,40 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
     @Override
     public void dispatch(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         //Config.init(loadPackageParam.packageName);
+        this.packageParam = loadPackageParam;
+    }
+
+    public ClassLoader getClassLoader() {
+        if (this.packageParam != null) {
+            return this.packageParam.classLoader;
+        }
+
+        if (focusActivity != null) {
+            return focusActivity.getClassLoader();
+        }
+
+        return null;
+    }
+
+    public void toast(final String message) {
+        if (focusActivity != null) {
+            focusActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(focusActivity, String.valueOf(message), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    public void toastLong(final String message) {
+        if (focusActivity != null) {
+            focusActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(focusActivity, String.valueOf(message), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 }
