@@ -7,6 +7,7 @@ import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 
 import java.io.OutputStream;
@@ -16,6 +17,65 @@ import java.util.List;
 import z.houbin.xposed.lib.log.Logs;
 
 public class Views {
+
+    /**
+     * 查询包含
+     *
+     * @param activity Activity
+     * @param text     文本
+     * @return 控件
+     */
+    public static List<View> findContains(Activity activity, String text) {
+        List<View> resultList = new ArrayList<>();
+        if (activity != null) {
+            Window window = activity.getWindow();
+            if (window != null) {
+                ViewGroup root = (ViewGroup) window.getDecorView();
+                List<View> contains = findContains(root, text);
+                if (!contains.isEmpty()) {
+                    resultList.addAll(contains);
+                }
+            }
+        }
+        return resultList;
+    }
+
+    private static List<View> findContains(ViewGroup group, String text) {
+        List<View> resultList = new ArrayList<>();
+        if (group != null) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                if (child instanceof ViewGroup) {
+                    List<View> viewList = findContains((ViewGroup) child, text);
+                    if (!viewList.isEmpty()) {
+                        resultList.addAll(viewList);
+                    }
+                } else {
+                    //判断是否包含
+                    String contentDescription = child.getContentDescription() + "";
+                    if (contentDescription.contains(text)) {
+                        resultList.add(child);
+                        continue;
+                    }
+
+                    String str = child.toString();
+                    if (str.contains(text)) {
+                        resultList.add(child);
+                        continue;
+                    }
+
+                    if (child instanceof TextView) {
+                        TextView t = (TextView) child;
+                        if ((t.getText() + "").contains(text)) {
+                            resultList.add(child);
+                        }
+                    }
+                }
+            }
+        }
+        return resultList;
+    }
+
     /**
      * android.widget.LinearLayout{e392b56 V.E...... ......I. 0,0-0,0 #7f110e3e app:id/bxj}
      */
