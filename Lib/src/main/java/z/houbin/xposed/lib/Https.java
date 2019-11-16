@@ -93,6 +93,7 @@ public class Https {
             String line;
             while ((line = in.readLine()) != null) {
                 result.append(line);
+                result.append(System.lineSeparator());
             }
         } catch (Exception e) {
             Logs.e(e);
@@ -163,6 +164,7 @@ public class Https {
             String line;
             while ((line = in.readLine()) != null) {
                 result.append(line);
+                result.append(System.lineSeparator());
             }
         } catch (IOException e) {
             Logs.e(e);
@@ -216,6 +218,7 @@ public class Https {
             String line;
             while ((line = in.readLine()) != null) {
                 result.append(line);
+                result.append(System.lineSeparator());
             }
         } catch (Exception e) {
             Logs.e(e);
@@ -303,6 +306,7 @@ public class Https {
             String line;
             while ((line = in.readLine()) != null) {
                 result.append(line);
+                result.append(System.lineSeparator());
             }
         } catch (Exception e) {
             Logs.e(e);
