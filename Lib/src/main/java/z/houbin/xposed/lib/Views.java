@@ -2,6 +2,7 @@ package z.houbin.xposed.lib;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.SystemClock;
 import android.view.MotionEvent;
@@ -17,6 +18,10 @@ import java.util.List;
 import z.houbin.xposed.lib.log.Logs;
 
 public class Views {
+
+    public static ViewGroup getRoot(Activity activity) {
+        return (ViewGroup) activity.getWindow().getDecorView();
+    }
 
     /**
      * 查询包含
@@ -76,22 +81,33 @@ public class Views {
         return resultList;
     }
 
+    public static List<View> findViewsById(Activity activity, String id) {
+        return findViewsById(getRoot(activity), id);
+    }
+
+    public static List<View> findViewsById(Activity activity, int id) {
+        return findViewsById(getRoot(activity), id);
+    }
+
     /**
      * android.widget.LinearLayout{e392b56 V.E...... ......I. 0,0-0,0 #7f110e3e app:id/bxj}
      */
-    public static List<View> findViewById(ViewGroup group, String id) {
+    public static List<View> findViewsById(ViewGroup group, String id) {
         List<View> viewList = new ArrayList<>();
         if (group != null) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
                 if (child instanceof ViewGroup) {
-                    List<View> find = findViewById((ViewGroup) child, id);
+                    List<View> find = findViewsById((ViewGroup) child, id);
                     if (!find.isEmpty()) {
                         viewList.addAll(find);
                     }
                 } else if (child != null) {
-                    if (child.toString().contains(id)) {
-                        viewList.add(child);
+                    if (child.getId() != View.NO_ID) {
+                        Resources r = child.getResources();
+                        if (id.equals(r.getResourceEntryName(child.getId()))) {
+                            viewList.add(child);
+                        }
                     }
                 }
             }
@@ -99,13 +115,13 @@ public class Views {
         return viewList;
     }
 
-    public static List<View> findViewById(ViewGroup group, int id) {
+    public static List<View> findViewsById(ViewGroup group, int id) {
         List<View> viewList = new ArrayList<>();
         if (group != null) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
                 if (child instanceof ViewGroup) {
-                    List<View> find = findViewById((ViewGroup) child, id);
+                    List<View> find = findViewsById((ViewGroup) child, id);
                     if (!find.isEmpty()) {
                         viewList.addAll(find);
                     }
@@ -117,6 +133,10 @@ public class Views {
             }
         }
         return viewList;
+    }
+
+    public static List<View> findViewsByClassName(Activity activity, String text) {
+        return findViewsByClassName(getRoot(activity), text);
     }
 
     public static List<View> findViewsByClassName(ViewGroup group, String text) {
@@ -139,24 +159,33 @@ public class Views {
         return viewList;
     }
 
-    public static View findViewByDesc(ViewGroup group, String text) {
+    public static List<View> findViewByDesc(Activity activity, String text) {
+        return findViewsByDesc(getRoot(activity), text);
+    }
+
+    public static List<View> findViewsByDesc(ViewGroup group, String text) {
+        List<View> viewList = new ArrayList<>();
         if (group != null) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
                 if (child instanceof ViewGroup) {
-                    View find = findViewByDesc((ViewGroup) child, text);
-                    if (find != null) {
-                        return find;
+                    List<View> find = findViewsByDesc((ViewGroup) child, text);
+                    if (!find.isEmpty()) {
+                        viewList.addAll(find);
                     }
                 } else if (child != null) {
                     String desc = child.getContentDescription() + "";
                     if (text.equals(desc)) {
-                        return child;
+                        viewList.add(child);
                     }
                 }
             }
         }
-        return null;
+        return viewList;
+    }
+
+    public static List<View> findViewsByText(Activity activity, String text) {
+        return findViewsByText(getRoot(activity), text);
     }
 
     public static List<View> findViewsByText(ViewGroup group, String text) {
@@ -178,26 +207,6 @@ public class Views {
             }
         }
         return viewList;
-    }
-
-    public static View findViewByText(ViewGroup group, String text) {
-        if (group != null) {
-            for (int i = 0; i < group.getChildCount(); i++) {
-                View child = group.getChildAt(i);
-                if (child instanceof TextView) {
-                    TextView textView = (TextView) child;
-                    if (text.equals(textView.getText().toString())) {
-                        return textView;
-                    }
-                } else if (child instanceof ViewGroup) {
-                    View find = findViewByText((ViewGroup) child, text);
-                    if (find != null) {
-                        return find;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     //输入密码
@@ -281,9 +290,15 @@ public class Views {
         return new Point(x, y);
     }
 
-    public static void clickBySu(Point point) {
+    public static void clickBySu(final Point point) {
         //Shell.SU.run("input tap " + point.x + " " + point.y);
-        exec("input tap " + point.x + " " + point.y);
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                exec("input tap " + point.x + " " + point.y);
+            }
+        }.start();
     }
 
     private static OutputStream os;

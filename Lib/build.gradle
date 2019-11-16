@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 23
-        versionName "2.3"
+        versionCode 24
+        versionName "2.4"
         //21:修复文件追加第一行直接覆盖的情况
     }
 

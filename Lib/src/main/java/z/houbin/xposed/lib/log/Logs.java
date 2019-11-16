@@ -6,13 +6,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XC_MethodHook;
-import z.houbin.xposed.lib.Config;
 
 /**
  * 日志工具
  */
 public class Logs {
     public static String TAG = "Xposed.Lib";
+
+    public static void init(String t) {
+        TAG = t;
+    }
 
     public static void i(String text) {
         Log.i(TAG, text);
