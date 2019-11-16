@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import z.houbin.xposed.lib.log.Logs;
+import z.houbin.xposed.lib.shell.Shell;
 
 public class Views {
 
@@ -264,17 +264,24 @@ public class Views {
     public static void click(View v) {
         if (v != null) {
             if (v.isClickable()) {
-                v.performClick();
-            } else {
-                Point p = getCenter(v);
-                MotionEvent actionDown = MotionEvent.obtain(System.currentTimeMillis(), System.currentTimeMillis() + 100, MotionEvent.ACTION_DOWN, p.x, p.y, 0);
-                v.dispatchTouchEvent(actionDown);
+                if (v.performClick()) {
+                    return;
+                }
+            }
 
-                MotionEvent actionUp = MotionEvent.obtain(System.currentTimeMillis(), System.currentTimeMillis() + 100, MotionEvent.ACTION_UP, p.x, p.y, 0);
-                v.dispatchTouchEvent(actionUp);
+            Point p = getCenter(v);
+            MotionEvent actionDown = MotionEvent.obtain(System.currentTimeMillis(), System.currentTimeMillis() + 100, MotionEvent.ACTION_DOWN, p.x, p.y, 0);
+            v.dispatchTouchEvent(actionDown);
 
-                actionDown.recycle();
-                actionUp.recycle();
+            MotionEvent actionUp = MotionEvent.obtain(System.currentTimeMillis(), System.currentTimeMillis() + 100, MotionEvent.ACTION_UP, p.x, p.y, 0);
+            v.dispatchTouchEvent(actionUp);
+
+            actionDown.recycle();
+            actionUp.recycle();
+
+            View parent = (View) v.getParent();
+            if (parent != null) {
+                parent.performClick();
             }
         }
     }
@@ -290,28 +297,30 @@ public class Views {
         return new Point(x, y);
     }
 
+    public static void clickBySu(View v) {
+        if (v != null) {
+            Point point = getCenter(v);
+            clickBySu(point);
+        }
+    }
+
     public static void clickBySu(final Point point) {
-        //Shell.SU.run("input tap " + point.x + " " + point.y);
         new Thread() {
             @Override
             public void run() {
                 super.run();
-                exec("input tap " + point.x + " " + point.y);
+                Shell.SU.run("input tap " + point.x + " " + point.y);
             }
         }.start();
     }
 
-    private static OutputStream os;
-
-    private static void exec(String cmd) {
-        try {
-            if (os == null) {
-                os = Runtime.getRuntime().exec("su").getOutputStream();
+    public static void postDelayed(Activity activity, Runnable runnable, int delay) {
+        if (activity != null) {
+            Window window = activity.getWindow();
+            if (window != null) {
+                View decor = window.getDecorView();
+                decor.postDelayed(runnable, delay);
             }
-            os.write(cmd.getBytes());
-            os.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
