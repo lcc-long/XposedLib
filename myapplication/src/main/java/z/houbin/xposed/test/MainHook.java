@@ -27,11 +27,14 @@ public class MainHook extends BaseHook {
         super.dispatch(loadPackageParam);
 
         XposedBridge.log("Main hook dispatch ->" + TARGET_PACKAGE + "-" + LOCALE_PACKAGE + "-" + loadPackageParam.packageName);
-
+        Logs.init("z.houbin.lib.test");
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
+
+                Logs.printMethodParam("attach", param);
+
                 Application context = (Application) param.thisObject;
                 context.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
                     @Override

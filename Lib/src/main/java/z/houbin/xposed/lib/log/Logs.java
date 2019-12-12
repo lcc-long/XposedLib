@@ -3,6 +3,7 @@ package z.houbin.xposed.lib.log;
 import android.util.Log;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -59,7 +60,11 @@ public class Logs {
      */
     public static void printMethodParam(String tag, XC_MethodHook.MethodHookParam param) {
         StringBuilder builder = new StringBuilder(tag);
+        builder.append(" ");
         try {
+            Member method = param.method;
+            method.getName();
+
             Object[] params = param.args;
             for (int i = 0; i < params.length; i++) {
                 builder.append("p").append(i);
