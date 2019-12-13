@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import z.houbin.xposed.lib.Config;
-import z.houbin.xposed.lib.Permissions;
+import z.houbin.xposed.lib.permission.Permissions;
 import z.houbin.xposed.lib.R;
 
 public class LogActivity extends AppCompatActivity {

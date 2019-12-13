@@ -1,12 +1,16 @@
 package z.houbin.xposed.lib.log;
 
+import android.database.Cursor;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 import de.robv.android.xposed.XC_MethodHook;
+import z.houbin.xposed.lib.database.SqliteHelper;
 
 /**
  * 日志工具
@@ -15,7 +19,7 @@ public class Logs {
     public static String TAG = "Xposed.Lib";
 
     public static void init(String t) {
-        TAG = t;
+        TAG = t + " ";
     }
 
     public static void i(String text) {
@@ -37,6 +41,14 @@ public class Logs {
     public static void e(String tag, String text) {
         Log.e(TAG + " - " + tag, text);
         //Config.writeLog(tag + ": " + text);
+    }
+
+    public static void e(Object cls, String log) {
+        Logs.e(cls.getClass().getName(), log);
+    }
+
+    public static void e(Class cls, String log) {
+        Logs.e(cls.getName(), log);
     }
 
     /**
@@ -102,13 +114,17 @@ public class Logs {
                 String varName = field.getName();
                 try {
                     boolean access = field.isAccessible();
-                    if (!access) field.setAccessible(true);
+                    if (!access) {
+                        field.setAccessible(true);
+                    }
 
                     //从obj中获取field变量
                     Object o = field.get(obj);
                     builder.append("变量： " + varName + " = " + o);
                     builder.append("\r\n");
-                    if (!access) field.setAccessible(false);
+                    if (!access) {
+                        field.setAccessible(false);
+                    }
                 } catch (Exception ex) {
                     e(ex);
                 }
@@ -158,5 +174,86 @@ public class Logs {
                     , trace.getLineNumber()));
         }
         Logs.e("StackTrace \r\n" + builder.toString());
+    }
+
+    public static void e(Object tag, Object... log) {
+        if (log.length == 1) {
+            Logs.e(tag, log[0]);
+        } else if (log.length > 1) {
+            //多个格式化
+            Logs.e(TAG, String.format(Locale.CHINA, tag.toString(), log));
+        }
+    }
+
+    private static void e(Object tag, Object log) {
+        Logs.e(getTag(tag), getLog(log));
+    }
+
+    private static String getLog(Object log) {
+        StringBuilder builder = new StringBuilder();
+        if (log instanceof Bundle) {
+            builder.append(getBundleLog((Bundle) log));
+        } else if (log instanceof Cursor) {
+            builder.append(getCursorLog((Cursor) log));
+        } else if (log.getClass().isArray()) {
+            builder.append(getArrayLog((Object[]) log));
+        } else {
+            builder.append(log.toString());
+        }
+        return builder.toString();
+    }
+
+    private static String getArrayLog(Object[] arr) {
+        StringBuilder builder = new StringBuilder();
+        if (arr != null) {
+            for (int i = 0; i < arr.length; i++) {
+                builder.append("[");
+                builder.append(i);
+                builder.append("]");
+                builder.append(": ");
+                builder.append(arr[i]);
+                builder.append("   ");
+            }
+        }
+        return builder.toString();
+    }
+
+    private static String getBundleLog(Bundle bundle) {
+        StringBuilder builder = new StringBuilder();
+        for (String key : bundle.keySet()) {
+            Object v = bundle.get(key);
+            if (v == null) {
+                v = "";
+            }
+            builder.append(key);
+            builder.append(":");
+            builder.append(v.toString());
+            builder.append("--");
+        }
+        return builder.toString();
+    }
+
+    private static String getCursorLog(Cursor cursor) {
+        StringBuilder builder = new StringBuilder();
+        try {
+            builder.append(SqliteHelper.dumpCursor(cursor));
+        } catch (Exception e) {
+            Logs.e(e);
+        }
+        return builder.toString();
+    }
+
+    private static String getTag(Object tag) {
+        String t = TAG;
+        if (tag == null) {
+            t += "";
+        } else if (tag instanceof String) {
+            t += tag.toString();
+        } else if (tag instanceof Class) {
+            t += ((Class) tag).getName();
+        } else {
+            t += tag.getClass().getSimpleName();
+        }
+        return t;
     }
 }

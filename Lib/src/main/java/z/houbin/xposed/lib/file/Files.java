@@ -1,13 +1,24 @@
-package z.houbin.xposed.lib;
+package z.houbin.xposed.lib.file;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
+import z.houbin.xposed.lib.log.Logs;
+
+/**
+ * 文件工具类
+ *
+ * @author z.houbin
+ */
 public class Files {
 
     /**
@@ -18,10 +29,8 @@ public class Files {
      */
     public static void writeFile(File file, String text) {
         try {
-            File parentFile = file.getParentFile();
-            if (!parentFile.exists()) {
-                boolean r = parentFile.mkdirs();
-            }
+            makeParent(file);
+
             if (!file.exists()) {
                 boolean r = file.createNewFile();
             }
@@ -125,6 +134,64 @@ public class Files {
                     delete(listFile);
                 }
             }
+        }
+    }
+
+    /**
+     * 写入文件
+     *
+     * @param file 文件
+     * @param data 字节数据
+     */
+    public static void writeByte(File file, byte[] data) {
+        try {
+            makeParent(file);
+
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(data);
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            Logs.e(e);
+        }
+    }
+
+    /**
+     * 如果父文件不存在则创建
+     *
+     * @param file 文件
+     */
+    public static void makeParent(File file) {
+        if (!file.exists()) {
+            if (!file.getParentFile().exists()) {
+                boolean r = file.getParentFile().mkdirs();
+            }
+        }
+    }
+
+    /**
+     * 复制文件
+     *
+     * @param source 源文件
+     * @param dst    目标文件
+     */
+    public static void copyFile(File source, File dst) {
+        makeParent(dst);
+
+        InputStream input = null;
+        OutputStream output = null;
+        try {
+            input = new FileInputStream(source);
+            output = new FileOutputStream(dst);
+            byte[] buf = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buf)) != -1) {
+                output.write(buf, 0, bytesRead);
+            }
+            output.close();
+            input.close();
+        } catch (Exception e) {
+            Logs.e(e);
         }
     }
 }

@@ -11,6 +11,7 @@ import z.houbin.xposed.lib.log.Logs;
 
 /**
  * 自动保存配置
+ * @author z.houbin
  */
 public class ConfigEditText extends EditText {
     private String key;

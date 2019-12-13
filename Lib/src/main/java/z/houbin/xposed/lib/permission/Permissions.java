@@ -1,4 +1,4 @@
-package z.houbin.xposed.lib;
+package z.houbin.xposed.lib.permission;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;

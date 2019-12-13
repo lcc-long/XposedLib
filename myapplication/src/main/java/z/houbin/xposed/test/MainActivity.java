@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import z.houbin.xposed.lib.Config;
-import z.houbin.xposed.lib.Permissions;
-import z.houbin.xposed.lib.Util;
+import z.houbin.xposed.lib.permission.Permissions;
+import z.houbin.xposed.lib.XposedUtil;
 import z.houbin.xposed.lib.log.LogActivity;
 import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.ui.ConfigEditText;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void check(View view) {
-        if (Util.isHook()) {
+        if (XposedUtil.isHook()) {
             Toast.makeText(this, "Hook 成功", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Hook 失败", Toast.LENGTH_SHORT).show();
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void reboot(View view) {
-        Util.restartPackage(getApplicationContext(), MainHook.TARGET_PACKAGE);
+        XposedUtil.restartPackage(getApplicationContext(), MainHook.TARGET_PACKAGE);
     }
 
     public void logs(View view) {

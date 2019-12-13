@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Locale;
 
+import z.houbin.xposed.lib.file.Files;
 import z.houbin.xposed.lib.log.Logs;
 
 public class Config {

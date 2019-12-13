@@ -21,8 +21,9 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.shell.Shell;
+import z.houbin.xposed.lib.thread.ThreadPool;
 
-public class Util {
+public class XposedUtil {
 
     /**
      * md5加密
@@ -108,11 +109,9 @@ public class Util {
         if (context == null) {
             return;
         }
-
-        new Thread() {
+        ThreadPool.post(new Runnable() {
             @Override
             public void run() {
-                super.run();
                 Shell.SU.run("am force-stop " + packageName);
 
                 Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
@@ -121,7 +120,31 @@ public class Util {
                     context.startActivity(intent);
                 }
             }
-        }.start();
+        });
+    }
+
+    /**
+     * 重启程序
+     *
+     * @param context     上下文
+     * @param packageName 包名
+     */
+    public static void restartPackage(final Context context, final String user, final String packageName) {
+        if (context == null) {
+            return;
+        }
+        ThreadPool.post(new Runnable() {
+            @Override
+            public void run() {
+                Shell.SU.run("am force-stop --user " + user + " com.tencent.mm");
+
+                Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+                if (intent != null) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            }
+        });
     }
 
     /**
@@ -210,9 +233,7 @@ public class Util {
         if (method != null) {
             try {
                 return method.invoke(object, params);
-            } catch (IllegalAccessException e) {
-                Logs.e(e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 Logs.e(e);
             }
         }

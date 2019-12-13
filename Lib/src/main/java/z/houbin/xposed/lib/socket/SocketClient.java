@@ -7,6 +7,9 @@ import java.net.Socket;
 
 import z.houbin.xposed.lib.log.Logs;
 
+/**
+ * @author z.houbin
+ */
 public class SocketClient extends Thread {
     private Socket socket;
     private static final String TAG = "SocketClient";

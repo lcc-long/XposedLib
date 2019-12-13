@@ -1,14 +1,17 @@
 package z.houbin.xposed.lib.hot;
 
 import android.app.Activity;
+import android.app.Application;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import z.houbin.xposed.lib.log.Logs;
 
-public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
+public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher, Application.ActivityLifecycleCallbacks {
     public Activity focusActivity;
     protected XC_LoadPackage.LoadPackageParam packageParam;
 
@@ -26,7 +29,7 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
                     //Logs.e(e);
                 }
             } else if (loadPackageParam.packageName.equals(localePackage)) {
-                XposedHelpers.findAndHookMethod("z.houbin.xposed.lib.Util", loadPackageParam.classLoader, "isHook", XC_MethodReplacement.returnConstant(true));
+                XposedHelpers.findAndHookMethod("z.houbin.xposed.lib.XposedUtil", loadPackageParam.classLoader, "isHook", XC_MethodReplacement.returnConstant(true));
             }
         }
     }
@@ -34,7 +37,7 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
     protected void startHotXPosed(Class clz, XC_LoadPackage.LoadPackageParam loadPackageParam, String localePackage) {
         if (!loadPackageParam.packageName.equals("android")) {
             if (loadPackageParam.packageName.equals(localePackage)) {
-                XposedHelpers.findAndHookMethod("z.houbin.xposed.lib.Util", loadPackageParam.classLoader, "isHook", XC_MethodReplacement.returnConstant(true));
+                XposedHelpers.findAndHookMethod("z.houbin.xposed.lib.XposedUtil", loadPackageParam.classLoader, "isHook", XC_MethodReplacement.returnConstant(true));
             } else {
                 try {
                     HotXPosed.hook(clz, loadPackageParam, localePackage);
@@ -51,6 +54,10 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
         this.packageParam = loadPackageParam;
     }
 
+    public void dispatchAttach(Application application) {
+        application.registerActivityLifecycleCallbacks(this);
+    }
+
     public ClassLoader getClassLoader() {
         if (this.packageParam != null) {
             return this.packageParam.classLoader;
@@ -60,6 +67,18 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
             return focusActivity.getClassLoader();
         }
 
+        return null;
+    }
+
+    public Class load(String name) {
+        ClassLoader classLoader = getClassLoader();
+        if (classLoader != null) {
+            try {
+                return classLoader.loadClass(name);
+            } catch (ClassNotFoundException e) {
+                Logs.e(e);
+            }
+        }
         return null;
     }
 
@@ -83,5 +102,40 @@ public class BaseHook implements IXposedHookLoadPackage, IHookerDispatcher {
                 }
             });
         }
+    }
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+        focusActivity = activity;
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+
     }
 }
