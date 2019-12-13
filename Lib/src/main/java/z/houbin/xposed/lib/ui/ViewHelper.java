@@ -1,4 +1,4 @@
-package z.houbin.xposed.lib;
+package z.houbin.xposed.lib.ui;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -17,7 +17,26 @@ import java.util.List;
 import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.shell.Shell;
 
-public class Views {
+/**
+ * @author z.houbin
+ */
+public class ViewHelper {
+
+    public static void click(Activity activity, View view) {
+        if (activity == null || view == null) {
+            return;
+        }
+        Point p = getCenter(view);
+
+        MotionEvent actionDown = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, p.x, p.y, 0);
+        activity.dispatchTouchEvent(actionDown);
+
+        MotionEvent actionUp = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, p.x, p.y, 0);
+        activity.dispatchTouchEvent(actionUp);
+
+        actionDown.recycle();
+        actionUp.recycle();
+    }
 
     public static ViewGroup getRoot(Activity activity) {
         return (ViewGroup) activity.getWindow().getDecorView();
@@ -85,8 +104,9 @@ public class Views {
         return findViewsById(getRoot(activity), id);
     }
 
-    public static List<View> findViewsById(Activity activity, int id) {
-        return findViewsById(getRoot(activity), id);
+
+    public static View findViewById(Activity activity, int id) {
+        return activity.findViewById(id);
     }
 
     /**
