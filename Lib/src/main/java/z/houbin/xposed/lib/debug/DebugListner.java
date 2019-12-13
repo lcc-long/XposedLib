@@ -1,5 +1,6 @@
 package z.houbin.xposed.lib.debug;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,7 +29,11 @@ public class DebugListner {
     public boolean isDebug(XC_MethodHook.MethodHookParam method) {
         boolean match = false;
         if (method != null) {
-            match = methodNames.contains(method.method.getName());
+            String methodName = method.method.getName();
+            if (method.method instanceof Constructor) {
+                methodName = "init";
+            }
+            match = methodNames.contains(methodName);
         }
         return match;
     }

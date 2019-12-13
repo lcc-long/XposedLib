@@ -30,7 +30,7 @@ public class Base64Util {
                 data.flush();
             }
             dataArray = data.toByteArray();
-            return Base64.encodeToString(dataArray, Base64.DEFAULT);
+            return Base64.encodeToString(dataArray, Base64.NO_WRAP);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,7 +45,7 @@ public class Base64Util {
      * @return base编码
      */
     public static String byteArray2Base64(byte[] data) {
-        return Base64.encodeToString(data, Base64.DEFAULT);
+        return Base64.encodeToString(data, Base64.NO_WRAP);
     }
 
     /**
@@ -55,7 +55,7 @@ public class Base64Util {
      * @return 解密内容
      */
     public static String decode(String string) {
-        return new String(Base64.decode(string, Base64.DEFAULT));
+        return new String(Base64.decode(string, Base64.NO_WRAP));
     }
 
     /**
@@ -65,6 +65,6 @@ public class Base64Util {
      * @return 解码结果
      */
     public static byte[] decodeByte(String string) {
-        return Base64.decode(string, Base64.DEFAULT);
+        return Base64.decode(string, Base64.NO_WRAP);
     }
 }
