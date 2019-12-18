@@ -1,7 +1,6 @@
 package z.houbin.xposed.lib.ui;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.SystemClock;
@@ -12,16 +11,22 @@ import android.view.Window;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.shell.Shell;
+import z.houbin.xposed.lib.thread.ThreadPool;
 
 /**
  * @author z.houbin
  */
 public class ViewHelper {
-
+    /**
+     * 模拟点击
+     *
+     * @param activity 界面
+     * @param view     控件
+     */
     public static void click(Activity activity, View view) {
         if (activity == null || view == null) {
             return;
@@ -38,6 +43,12 @@ public class ViewHelper {
         actionUp.recycle();
     }
 
+    /**
+     * 获取根布局
+     *
+     * @param activity 界面
+     * @return 根布局
+     */
     public static ViewGroup getRoot(Activity activity) {
         return (ViewGroup) activity.getWindow().getDecorView();
     }
@@ -64,6 +75,93 @@ public class ViewHelper {
         return resultList;
     }
 
+    /**
+     * 根据ID名称查询
+     *
+     * @param activity 界面
+     * @param id       id 字符串
+     * @return 控件列表
+     */
+    public static LinkedList<View> findViewsById(Activity activity, String id) {
+        return findViewsById(getRoot(activity), id);
+    }
+
+    /**
+     * 根据Id查找控件
+     *
+     * @param activity 界面
+     * @param id       id
+     * @return 控件列表
+     */
+    public static View findViewById(Activity activity, int id) {
+        return activity.findViewById(id);
+    }
+
+    /**
+     * 在指定布局下查找控件
+     * android.widget.LinearLayout{e392b56 V.E...... ......I. 0,0-0,0 #7f110e3e app:id/bxj}
+     *
+     * @param group 父布局
+     * @param id    id
+     * @return 控件列表
+     */
+    public static LinkedList<View> findViewsById(ViewGroup group, String id) {
+        LinkedList<View> viewList = new LinkedList<>();
+        if (group != null) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                if (child instanceof ViewGroup) {
+                    List<View> find = findViewsById((ViewGroup) child, id);
+                    if (!find.isEmpty()) {
+                        viewList.addAll(find);
+                    }
+                } else if (child != null) {
+                    if (child.getId() != View.NO_ID) {
+                        Resources r = child.getResources();
+                        if (id.equals(r.getResourceEntryName(child.getId()))) {
+                            viewList.add(child);
+                        }
+                    }
+                }
+            }
+        }
+        return viewList;
+    }
+
+    /**
+     * 在指定布局下查找控件
+     *
+     * @param group 父布局
+     * @param id    id
+     * @return 控件列表
+     */
+    public static LinkedList<View> findViewsById(ViewGroup group, int id) {
+        LinkedList<View> viewList = new LinkedList<>();
+        if (group != null) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                if (child instanceof ViewGroup) {
+                    List<View> find = findViewsById((ViewGroup) child, id);
+                    if (!find.isEmpty()) {
+                        viewList.addAll(find);
+                    }
+                } else if (child != null) {
+                    if (child.getId() == id) {
+                        viewList.add(child);
+                    }
+                }
+            }
+        }
+        return viewList;
+    }
+
+    /**
+     * 查找包含指定特征的控件
+     *
+     * @param group 父布局
+     * @param text  文本/desc/id
+     * @return 控件列表
+     */
     private static List<View> findContains(ViewGroup group, String text) {
         List<View> resultList = new ArrayList<>();
         if (group != null) {
@@ -100,53 +198,36 @@ public class ViewHelper {
         return resultList;
     }
 
-    public static List<View> findViewsById(Activity activity, String id) {
-        return findViewsById(getRoot(activity), id);
-    }
-
-
-    public static View findViewById(Activity activity, int id) {
-        return activity.findViewById(id);
+    /**
+     * 界面中根据类名查找
+     *
+     * @param activity 界面
+     * @param clsName  类名
+     * @return 控件列表
+     */
+    public static LinkedList<View> findViewsByClassName(Activity activity, String clsName) {
+        return findViewsByClassName(getRoot(activity), clsName);
     }
 
     /**
-     * android.widget.LinearLayout{e392b56 V.E...... ......I. 0,0-0,0 #7f110e3e app:id/bxj}
+     * 指定布局中根据类名查找控件
+     *
+     * @param group   父布局
+     * @param clsName 类名
+     * @return 控件列表
      */
-    public static List<View> findViewsById(ViewGroup group, String id) {
-        List<View> viewList = new ArrayList<>();
+    public static LinkedList<View> findViewsByClassName(ViewGroup group, String clsName) {
+        LinkedList<View> viewList = new LinkedList<>();
         if (group != null) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
                 if (child instanceof ViewGroup) {
-                    List<View> find = findViewsById((ViewGroup) child, id);
+                    List<View> find = findViewsByClassName((ViewGroup) child, clsName);
                     if (!find.isEmpty()) {
                         viewList.addAll(find);
                     }
                 } else if (child != null) {
-                    if (child.getId() != View.NO_ID) {
-                        Resources r = child.getResources();
-                        if (id.equals(r.getResourceEntryName(child.getId()))) {
-                            viewList.add(child);
-                        }
-                    }
-                }
-            }
-        }
-        return viewList;
-    }
-
-    public static List<View> findViewsById(ViewGroup group, int id) {
-        List<View> viewList = new ArrayList<>();
-        if (group != null) {
-            for (int i = 0; i < group.getChildCount(); i++) {
-                View child = group.getChildAt(i);
-                if (child instanceof ViewGroup) {
-                    List<View> find = findViewsById((ViewGroup) child, id);
-                    if (!find.isEmpty()) {
-                        viewList.addAll(find);
-                    }
-                } else if (child != null) {
-                    if (child.getId() == id) {
+                    if (child.getClass().getName().equals(clsName) || child.getClass().getSuperclass().getName().equals(clsName)) {
                         viewList.add(child);
                     }
                 }
@@ -155,22 +236,37 @@ public class ViewHelper {
         return viewList;
     }
 
-    public static List<View> findViewsByClassName(Activity activity, String text) {
-        return findViewsByClassName(getRoot(activity), text);
+    /**
+     * 界面中查找匹配的desc
+     *
+     * @param activity 界面
+     * @param desc     描述
+     * @return 控件列表
+     */
+    public static LinkedList<View> findViewByDesc(Activity activity, String desc) {
+        return findViewsByDesc(getRoot(activity), desc);
     }
 
-    public static List<View> findViewsByClassName(ViewGroup group, String text) {
-        List<View> viewList = new ArrayList<>();
+    /**
+     * 指定布局中查找desc
+     *
+     * @param group 父布局
+     * @param desc  描述
+     * @return 控件列表
+     */
+    public static LinkedList<View> findViewsByDesc(ViewGroup group, String desc) {
+        LinkedList<View> viewList = new LinkedList<>();
         if (group != null) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
                 if (child instanceof ViewGroup) {
-                    List<View> find = findViewsByClassName((ViewGroup) child, text);
+                    List<View> find = findViewsByDesc((ViewGroup) child, desc);
                     if (!find.isEmpty()) {
                         viewList.addAll(find);
                     }
                 } else if (child != null) {
-                    if (child.getClass().getName().equals(text) || child.getClass().getSuperclass().getName().equals(text)) {
+                    String descValue = child.getContentDescription() + "";
+                    if (desc.equals(descValue)) {
                         viewList.add(child);
                     }
                 }
@@ -179,37 +275,26 @@ public class ViewHelper {
         return viewList;
     }
 
-    public static List<View> findViewByDesc(Activity activity, String text) {
-        return findViewsByDesc(getRoot(activity), text);
-    }
-
-    public static List<View> findViewsByDesc(ViewGroup group, String text) {
-        List<View> viewList = new ArrayList<>();
-        if (group != null) {
-            for (int i = 0; i < group.getChildCount(); i++) {
-                View child = group.getChildAt(i);
-                if (child instanceof ViewGroup) {
-                    List<View> find = findViewsByDesc((ViewGroup) child, text);
-                    if (!find.isEmpty()) {
-                        viewList.addAll(find);
-                    }
-                } else if (child != null) {
-                    String desc = child.getContentDescription() + "";
-                    if (text.equals(desc)) {
-                        viewList.add(child);
-                    }
-                }
-            }
-        }
-        return viewList;
-    }
-
-    public static List<View> findViewsByText(Activity activity, String text) {
+    /**
+     * 在界面中查找文本
+     *
+     * @param activity 界面
+     * @param text     查找的文本
+     * @return 控件列表
+     */
+    public static LinkedList<View> findViewsByText(Activity activity, String text) {
         return findViewsByText(getRoot(activity), text);
     }
 
-    public static List<View> findViewsByText(ViewGroup group, String text) {
-        List<View> viewList = new ArrayList<>();
+    /**
+     * 在指定布局中查找文本
+     *
+     * @param group 父布局
+     * @param text  文本
+     * @return 控件列表
+     */
+    public static LinkedList<View> findViewsByText(ViewGroup group, String text) {
+        LinkedList<View> viewList = new LinkedList<>();
         if (group != null) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
@@ -229,84 +314,12 @@ public class ViewHelper {
         return viewList;
     }
 
-    //输入密码
-    public static void inputPassword(Activity activity, int num) {
-        int id = 0;
-        switch (num) {
-            case 0:
-                id = 0x7f112c1a;
-                break;
-            case 1:
-                id = 0x7f112c0d;
-                break;
-            case 2:
-                id = 0x7f112c0e;
-                break;
-            case 3:
-                id = 0x7f112c0f;
-                break;
-            case 4:
-                id = 0x7f112c11;
-                break;
-            case 5:
-                id = 0x7f112c12;
-                break;
-            case 6:
-                id = 0x7f112c13;
-                break;
-            case 7:
-                id = 0x7f112c15;
-                break;
-            case 8:
-                id = 0x7f112c16;
-                break;
-            case 9:
-                id = 0x7f112c17;
-                break;
-        }
-        View v = activity.findViewById(id);
-        if (v != null) {
-            int[] p = new int[2];
-            v.getLocationInWindow(p);
-            int x = p[0];
-            int y = p[1];
-            MotionEvent actionDown = MotionEvent.obtain(System.currentTimeMillis(), System.currentTimeMillis() + 100, MotionEvent.ACTION_DOWN, x, y, 0);
-            v.dispatchTouchEvent(actionDown);
-
-            MotionEvent actionUp = MotionEvent.obtain(System.currentTimeMillis(), System.currentTimeMillis() + 100, MotionEvent.ACTION_UP, x, y, 0);
-            v.dispatchTouchEvent(actionUp);
-
-            actionDown.recycle();
-            actionUp.recycle();
-        }
-    }
-
-    public static void click(View v) {
-        if (v != null) {
-            if (v.isClickable()) {
-                if (v.performClick()) {
-                    return;
-                }
-            }
-
-            Point p = getCenter(v);
-            MotionEvent actionDown = MotionEvent.obtain(System.currentTimeMillis(), System.currentTimeMillis() + 100, MotionEvent.ACTION_DOWN, p.x, p.y, 0);
-            v.dispatchTouchEvent(actionDown);
-
-            MotionEvent actionUp = MotionEvent.obtain(System.currentTimeMillis(), System.currentTimeMillis() + 100, MotionEvent.ACTION_UP, p.x, p.y, 0);
-            v.dispatchTouchEvent(actionUp);
-
-            actionDown.recycle();
-            actionUp.recycle();
-
-            View parent = (View) v.getParent();
-            if (parent != null) {
-                parent.performClick();
-            }
-        }
-    }
-
-
+    /**
+     * 获取控件中心点
+     *
+     * @param v 控件
+     * @return 中心点(x, y)
+     */
     public static Point getCenter(View v) {
         int[] p = new int[2];
         v.getLocationInWindow(p);
@@ -317,6 +330,11 @@ public class ViewHelper {
         return new Point(x, y);
     }
 
+    /**
+     * 使用超级管理员权限点击控件中心点
+     *
+     * @param v 需要点击的控件
+     */
     public static void clickBySu(View v) {
         if (v != null) {
             Point point = getCenter(v);
@@ -324,16 +342,28 @@ public class ViewHelper {
         }
     }
 
+    /**
+     * 使用超级管理权限点击某个点
+     *
+     * @param point 点击位置
+     */
     public static void clickBySu(final Point point) {
-        new Thread() {
+        ThreadPool.post(new Runnable() {
             @Override
             public void run() {
-                super.run();
                 Shell.SU.run("input tap " + point.x + " " + point.y);
+
             }
-        }.start();
+        });
     }
 
+    /**
+     * 主线程执行延迟任务
+     *
+     * @param activity 界面
+     * @param runnable 任务
+     * @param delay    延迟时间毫秒
+     */
     public static void postDelayed(Activity activity, Runnable runnable, int delay) {
         if (activity != null) {
             Window window = activity.getWindow();
@@ -344,41 +374,36 @@ public class ViewHelper {
         }
     }
 
+    /**
+     * 主线程执行延迟任务
+     *
+     * @param v        控件
+     * @param runnable 任务
+     * @param delay    延迟时间毫秒
+     */
     public static void postDelayed(View v, Runnable runnable, int delay) {
         if (v != null) {
             v.postDelayed(runnable, delay);
         }
     }
 
+    /**
+     * 子线程执行延迟任务
+     *
+     * @param runnable 任务
+     * @param delay    延迟时间毫秒
+     */
     public static void postDelayed(final Runnable runnable, final int delay) {
-        new Thread() {
+        ThreadPool.post(new Runnable() {
             @Override
             public void run() {
-                super.run();
                 try {
-                    sleep(delay);
+                    Thread.sleep(delay);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 runnable.run();
             }
-        }.start();
-    }
-
-    public static void sendHover(final int sx, final int sy, final int ex, final int ey) {
-        Logs.e("sendHover : sx = [" + sx + "], sy = [" + sy + "], ex = [" + ex + "], ey = [" + ey + "]");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //Log.e("nodes","sendhover");
-                Instrumentation iso = new Instrumentation();
-                iso.sendPointerSync(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, sx, sy, 0));
-                iso.sendPointerSync(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, sx, sy, 0));
-                for (int i = sx; i < ex; i += 10) {
-                    iso.sendPointerSync(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis() + 30, MotionEvent.ACTION_MOVE, i, sy, 0));
-                }
-                iso.sendPointerSync(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis() + 100, MotionEvent.ACTION_UP, ex, sy, 0));
-            }
-        }).start();
+        });
     }
 }
