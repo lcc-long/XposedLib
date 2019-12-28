@@ -7,15 +7,17 @@ import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import ezy.assist.compat.SettingsCompat;
 
 public class FloatManager {
-    private static FloatManager floatManager;
     private Activity context;
     private LinkedList<View> windows = new LinkedList<>();
     private WindowManager windowManager;
+
+    private static HashMap<Context, FloatManager> managerHashMap = new HashMap<>();
 
     private FloatManager(Activity context) {
         this.context = context;
@@ -23,10 +25,13 @@ public class FloatManager {
     }
 
     public static FloatManager getInstance(Activity context) {
-        if (floatManager == null) {
-            floatManager = new FloatManager(context);
+        if (managerHashMap.containsKey(context)) {
+            return managerHashMap.get(context);
+        } else {
+            FloatManager floatManager = new FloatManager(context);
+            managerHashMap.put(context, floatManager);
+            return floatManager;
         }
-        return floatManager;
     }
 
     private boolean checkPermission() {
