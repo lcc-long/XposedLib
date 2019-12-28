@@ -45,15 +45,21 @@ public class FloatManager {
         if (windows.contains(view)) {
             del(view);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //26及以上必须使用TYPE_APPLICATION_OVERLAY   @deprecated TYPE_PHONE
-            params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        } else {
-            params.type = WindowManager.LayoutParams.TYPE_PHONE;
+        if (params.type == 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //26及以上必须使用TYPE_APPLICATION_OVERLAY   @deprecated TYPE_PHONE
+                params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            } else {
+                params.type = WindowManager.LayoutParams.TYPE_PHONE;
+            }
         }
-        params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        params.format = PixelFormat.TRANSPARENT;
+        if (params.flags == 0) {
+            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        }
+        if (params.format == 0) {
+            params.format = PixelFormat.TRANSPARENT;
+        }
         windowManager.addView(view, params);
         windows.add(view);
     }
