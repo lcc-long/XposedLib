@@ -176,6 +176,9 @@ public class NodeInfo {
             if (activity != null) {
                 json.put("activity", "" + activity);
             }
+            if (packageName != null) {
+                json.put("package", "" + packageName);
+            }
         } catch (JSONException e) {
             Logs.e(e);
         }
