@@ -161,8 +161,8 @@ public class NodeInfo {
         try {
             json.put("id", (id == null) ? "" : id);
             json.put("idInt", "" + idInt);
-            json.put("className", "" + className);
-            json.put("superClassName", "" + superClassName);
+            json.put("class", "" + className);
+            json.put("superClass", "" + superClassName);
             json.put("text", (text == null) ? "" : text);
             json.put("desc", (desc == null) ? "" : desc);
             json.put("visibility", "" + visibility);
