@@ -2,9 +2,12 @@ package z.houbin.xposed.test;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import z.houbin.xposed.lib.Config;
@@ -13,6 +16,7 @@ import z.houbin.xposed.lib.XposedUtil;
 import z.houbin.xposed.lib.log.LogActivity;
 import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.ui.ConfigEditText;
+import z.houbin.xposed.lib.ui.FloatManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         Logs.i("Log", Config.readLog());
 
-        String[] req = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS};
+        String[] req = new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS};
         Permissions.requestPermissions(this, req, 0);
 
         ConfigEditText configEditText = findViewById(R.id.configEt);
@@ -56,4 +60,23 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(getApplicationContext(), LogActivity.class));
     }
 
+    public void dialog(View view) {
+        final Button button = new Button(getApplicationContext());
+        button.setText("1111111111");
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "11", Toast.LENGTH_SHORT).show();
+
+                FloatManager.getInstance(MainActivity.this).del(button);
+            }
+        });
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.width = -2;
+        layoutParams.height = -2;
+        layoutParams.x = 500;
+        layoutParams.y = 500;
+        FloatManager.getInstance(this).show(button, layoutParams);
+    }
 }
