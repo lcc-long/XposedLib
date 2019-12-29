@@ -85,8 +85,12 @@ public class UIDump {
             //ID
             Resources resources = context.getResources();
             if (View.NO_ID != v.getId()) {
-                nodeInfo.setId(resources.getResourceEntryName(v.getId()));
-                nodeInfo.setIdInt(v.getId());
+                try {
+                    nodeInfo.setId(resources.getResourceEntryName(v.getId()));
+                    nodeInfo.setIdInt(v.getId());
+                } catch (Resources.NotFoundException e) {
+                    //e.printStackTrace();
+                }
             }
             //文本
             try {
