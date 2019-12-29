@@ -7,6 +7,7 @@ import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -405,5 +406,20 @@ public class ViewHelper {
                 runnable.run();
             }
         });
+    }
+
+    public static int getDepth(View v) {
+        int depth = 0;
+        if (v != null) {
+            ViewParent p = v.getParent();
+            for (int i = 0; i < 100; i++) {
+                if (p == null) {
+                    break;
+                }
+                p = p.getParent();
+                depth++;
+            }
+        }
+        return depth;
     }
 }

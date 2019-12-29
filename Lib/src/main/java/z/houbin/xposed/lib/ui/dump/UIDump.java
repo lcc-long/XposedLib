@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Method;
 
 import z.houbin.xposed.lib.log.Logs;
+import z.houbin.xposed.lib.ui.ViewHelper;
 
 /**
  * 控件节点信息 dump
@@ -118,6 +119,8 @@ public class UIDump {
             Rect rect = new Rect();
             v.getGlobalVisibleRect(rect);
             nodeInfo.setBounds(rect);
+            //深度
+            nodeInfo.setDeep(ViewHelper.getDepth(v));
         }
         Logs.e("toNode", nodeInfo.toString());
         return nodeInfo;
