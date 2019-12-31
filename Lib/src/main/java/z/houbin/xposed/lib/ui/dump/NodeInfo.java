@@ -61,17 +61,17 @@ public class NodeInfo {
     /**
      * 深度
      */
-    private int deep;
+    private String deep;
     /**
      * 子节点列表
      */
     private List<NodeInfo> childList = new ArrayList<>();
 
-    public int getDeep() {
+    public String getDeep() {
         return deep;
     }
 
-    public void setDeep(int deep) {
+    public void setDeep(String deep) {
         this.deep = deep;
     }
 

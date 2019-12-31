@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import z.houbin.xposed.lib.shell.Shell;
 import z.houbin.xposed.lib.thread.ThreadPool;
@@ -421,5 +422,57 @@ public class ViewHelper {
             }
         }
         return depth;
+    }
+
+    public static String getDepthString(View v, int max) {
+        LinkedList<String> deepLinked = new LinkedList<>();
+        if (v != null) {
+            ViewGroup p = (ViewGroup) v.getParent();
+            deepLinked.add(getDepthFormat(p, v));
+            for (int i = 0; i < max; i++) {
+                if (p == null) {
+                    break;
+                }
+                if (p.getParent() instanceof ViewGroup) {
+                    ViewGroup pp = (ViewGroup) p.getParent();
+                    if (pp != null) {
+                        deepLinked.add(getDepthFormat(pp, p));
+                    }
+                    p = pp;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        StringBuilder builder = new StringBuilder("//");
+        for (String deep : deepLinked) {
+            builder.append(deep);
+            builder.append("/");
+        }
+        return builder.toString();
+    }
+
+    private static String getDepthFormat(View parent, View child) {
+        String format = String.format(Locale.CHINA, "%s[%d]", child.getClass().getSimpleName(), ((ViewGroup) parent).indexOfChild(child));
+        String id = getStringId(child);
+        if (id != null) {
+            format += "[id:" + id + "]";
+        }
+        return format;
+    }
+
+    public static String getStringId(View view) {
+        String id = null;
+        if (view != null) {
+            if (view.getId() != View.NO_ID) {
+                try {
+                    id = view.getResources().getResourceEntryName(view.getId());
+                } catch (Resources.NotFoundException e) {
+                    //e.printStackTrace();
+                }
+            }
+        }
+        return id;
     }
 }

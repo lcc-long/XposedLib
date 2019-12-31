@@ -120,7 +120,7 @@ public class UIDump {
             v.getGlobalVisibleRect(rect);
             nodeInfo.setBounds(rect);
             //深度
-            nodeInfo.setDeep(ViewHelper.getDepth(v));
+            nodeInfo.setDeep(ViewHelper.getDepthString(v, 10));
         }
         Logs.e("toNode", nodeInfo.toString());
         return nodeInfo;

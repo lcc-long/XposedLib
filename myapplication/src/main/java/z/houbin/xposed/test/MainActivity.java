@@ -17,6 +17,7 @@ import z.houbin.xposed.lib.log.LogActivity;
 import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.ui.ConfigEditText;
 import z.houbin.xposed.lib.ui.FloatManager;
+import z.houbin.xposed.lib.ui.ViewHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logs(View view) {
-        startActivity(new Intent(getApplicationContext(), LogActivity.class));
+        //startActivity(new Intent(getApplicationContext(), LogActivity.class));
+        String s = ViewHelper.getDepthString(view, 50);
+        Logs.e(""+s);
     }
 
     public void dialog(View view) {
