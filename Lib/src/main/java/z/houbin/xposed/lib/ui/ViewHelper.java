@@ -434,7 +434,7 @@ public class ViewHelper {
     public static String getDepthString(View v, int max) {
         LinkedList<String> deepLinked = new LinkedList<>();
         if (v != null) {
-            if (v.getParent() instanceof ViewGroup) {
+            if (v.getParent() != null && v.getParent() instanceof ViewGroup) {
                 ViewGroup p = (ViewGroup) v.getParent();
                 deepLinked.add(getDepthFormat(p, v));
                 for (int i = 0; i < max; i++) {
