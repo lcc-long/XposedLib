@@ -454,10 +454,10 @@ public class ViewHelper {
             }
         }
 
-        StringBuilder builder = new StringBuilder("//");
+        StringBuilder builder = new StringBuilder("::");
         for (String deep : deepLinked) {
             builder.append(deep);
-            builder.append("/");
+            builder.append(":");
         }
         return builder.toString();
     }
