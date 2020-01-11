@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Method;
 
 import z.houbin.xposed.lib.log.Logs;
+import z.houbin.xposed.lib.ui.ViewHelper;
 
 /**
  * 控件节点信息 dump
@@ -85,8 +86,12 @@ public class UIDump {
             //ID
             Resources resources = context.getResources();
             if (View.NO_ID != v.getId()) {
-                nodeInfo.setId(resources.getResourceEntryName(v.getId()));
-                nodeInfo.setIdInt(v.getId());
+                try {
+                    nodeInfo.setId(resources.getResourceEntryName(v.getId()));
+                    nodeInfo.setIdInt(v.getId());
+                } catch (Resources.NotFoundException e) {
+                    //e.printStackTrace();
+                }
             }
             //文本
             try {
@@ -114,6 +119,8 @@ public class UIDump {
             Rect rect = new Rect();
             v.getGlobalVisibleRect(rect);
             nodeInfo.setBounds(rect);
+            //深度
+            nodeInfo.setDeep(ViewHelper.getDepthString(v, 10));
         }
         Logs.e("toNode", nodeInfo.toString());
         return nodeInfo;

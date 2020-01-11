@@ -11,6 +11,7 @@ import z.houbin.xposed.lib.log.Logs;
 
 /**
  * 自动保存配置
+ *
  * @author z.houbin
  */
 public class ConfigEditText extends EditText {
@@ -36,7 +37,8 @@ public class ConfigEditText extends EditText {
         return getText().toString();
     }
 
-    public void setup() {
+    public void setup(String key) {
+        setKey(key);
         if (Config.isInit) {
             String data = Config.read(key);
             if (data.length() != 0) {
@@ -58,7 +60,7 @@ public class ConfigEditText extends EditText {
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    Config.save(key, s.toString());
+                    Config.save(ConfigEditText.this.key, s.toString());
                 } catch (Exception e) {
                     Logs.e(e);
                 }

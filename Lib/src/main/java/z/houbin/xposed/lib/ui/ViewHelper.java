@@ -2,18 +2,27 @@ package z.houbin.xposed.lib.ui;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import z.houbin.xposed.lib.file.Files;
+import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.shell.Shell;
 import z.houbin.xposed.lib.thread.ThreadPool;
 
@@ -405,5 +414,149 @@ public class ViewHelper {
                 runnable.run();
             }
         });
+    }
+
+    public static int getDepth(View v) {
+        int depth = 0;
+        if (v != null) {
+            ViewParent p = v.getParent();
+            for (int i = 0; i < 100; i++) {
+                if (p == null) {
+                    break;
+                }
+                p = p.getParent();
+                depth++;
+            }
+        }
+        return depth;
+    }
+
+    public static String getDepthString(View v, int max) {
+        LinkedList<String> deepLinked = new LinkedList<>();
+        if (v != null) {
+            if (v.getParent() != null && v.getParent() instanceof ViewGroup) {
+                ViewGroup p = (ViewGroup) v.getParent();
+                deepLinked.add(getDepthFormat(p, v));
+                for (int i = 0; i < max; i++) {
+                    if (p == null) {
+                        break;
+                    }
+                    if (p.getParent() instanceof ViewGroup) {
+                        ViewGroup pp = (ViewGroup) p.getParent();
+                        if (pp != null) {
+                            deepLinked.add(getDepthFormat(pp, p));
+                        }
+                        p = pp;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        StringBuilder builder = new StringBuilder("::");
+        for (String deep : deepLinked) {
+            builder.append(deep);
+            builder.append(":");
+        }
+        return builder.toString();
+    }
+
+    private static String getDepthFormat(View parent, View child) {
+        String format = String.format(Locale.CHINA, "%s[%d]", child.getClass().getSimpleName(), ((ViewGroup) parent).indexOfChild(child));
+        String id = getStringId(child);
+        if (id != null) {
+            format += "[id:" + id + "]";
+        }
+        return format;
+    }
+
+    public static String getStringId(View view) {
+        String id = null;
+        if (view != null) {
+            if (view.getId() != View.NO_ID) {
+                try {
+                    id = view.getResources().getResourceEntryName(view.getId());
+                } catch (Resources.NotFoundException e) {
+                    //e.printStackTrace();
+                }
+            }
+        }
+        return id;
+    }
+
+    public static void takeScreenShot(Activity activity, String saveFilePath, int options) {
+        if (activity == null) {
+            return;
+        }
+        View view = activity.getWindow().getDecorView();
+        //允许当前窗口保存缓存信息
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+
+        //获取屏幕宽和高
+        int width = getSceenWidth(activity);
+        int height = getSceenHeight(activity);
+
+        Bitmap bitmap = null;
+        try {
+            bitmap = Bitmap.createBitmap(view.getDrawingCache(), 0, 0, width, height);
+        } catch (Exception e) {
+            Logs.e(e);
+        }
+        //销毁缓存信息
+        view.destroyDrawingCache();
+        view.setDrawingCacheEnabled(false);
+
+        if (null != bitmap) {
+            try {
+                compressAndGenImage(bitmap, saveFilePath, options);
+            } catch (IOException e) {
+                Logs.e(e);
+            }
+        }
+    }
+
+    /**
+     * 获取屏幕高度
+     *
+     * @param activity
+     * @return
+     */
+    public static int getSceenHeight(Activity activity) {
+        return activity.getWindowManager().getDefaultDisplay().getHeight();
+    }
+
+    /**
+     * 获取屏幕宽度
+     *
+     * @param activity
+     * @return
+     */
+    public static int getSceenWidth(Activity activity) {
+        return activity.getWindowManager().getDefaultDisplay().getWidth();
+    }
+
+    /**
+     * 带压缩的保存图片
+     *
+     * @param image
+     * @param outPath
+     * @param options 压缩比例
+     * @throws IOException
+     */
+    public static void compressAndGenImage(Bitmap image, String outPath, int options) throws IOException {
+        Logs.e("图片压缩");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        // scale
+        // Store the bitmap into output stream(no compress)
+        image.compress(Bitmap.CompressFormat.JPEG, options, os);
+
+        // Generate compressed image file
+        Files.makeParent(new File(outPath));
+        FileOutputStream fos = new FileOutputStream(outPath);
+        fos.write(os.toByteArray());
+        fos.flush();
+        fos.close();
     }
 }

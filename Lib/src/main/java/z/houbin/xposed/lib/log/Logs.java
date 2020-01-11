@@ -7,6 +7,7 @@ import android.util.Log;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Locale;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -22,25 +23,12 @@ public class Logs {
         TAG = t + " ";
     }
 
-    public static void i(String text) {
-        Log.i(TAG, text);
-    }
-
-    public static void i(String tag, String text) {
-        if (tag == null) {
-            tag = TAG;
-        }
-        Log.i(tag, text);
-    }
-
     public static void e(String text) {
         Log.e(TAG, text);
-        //Config.writeLog(text);
     }
 
     public static void e(String tag, String text) {
         Log.e(TAG + " - " + tag, text);
-        //Config.writeLog(tag + ": " + text);
     }
 
     public static void e(Object cls, String log) {
@@ -51,11 +39,6 @@ public class Logs {
         Logs.e(cls.getName(), log);
     }
 
-    /**
-     * 打印异常信息
-     *
-     * @param e 异常
-     */
     public static void e(Throwable e) {
         e(TAG, Log.getStackTraceString(e));
     }
@@ -88,7 +71,11 @@ public class Logs {
                     builder.append("(");
                     builder.append(p.getClass().getName());
                     builder.append(")");
-                    builder.append(p.toString());
+                    if(p.getClass().isArray()){
+                        builder.append(Arrays.toString((Object[]) p));
+                    }else{
+                        builder.append(p.toString());
+                    }
                 }
                 builder.append(",");
             }
@@ -104,10 +91,10 @@ public class Logs {
      * @param obj 对象
      */
     public static void printField(Object obj) {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder("\r\n");
         try {
             Class cls = obj.getClass();
-            Field[] fields = cls.getDeclaredFields();
+            Field[] fields = cls.getFields();
             for (int i = 0; i < fields.length; i++) {
                 Field field = fields[i];
                 // 对于每个属性，获取属性名
@@ -131,7 +118,7 @@ public class Logs {
             }
 
             //函数
-            Method[] methods = cls.getDeclaredMethods();
+            Method[] methods = cls.getMethods();
             for (Method method : methods) {
                 // 对于每个属性，获取属性名
                 //得到方法的返回值类型的类类型
@@ -176,16 +163,7 @@ public class Logs {
         Logs.e("StackTrace \r\n" + builder.toString());
     }
 
-    public static void e(Object tag, Object... log) {
-        if (log.length == 1) {
-            Logs.e(tag, log[0]);
-        } else if (log.length > 1) {
-            //多个格式化
-            Logs.e(TAG, String.format(Locale.CHINA, tag.toString(), log));
-        }
-    }
-
-    private static void e(Object tag, Object log) {
+    public static void e(Object tag, Object log) {
         Logs.e(getTag(tag), getLog(log));
     }
 
@@ -255,5 +233,9 @@ public class Logs {
             t += tag.getClass().getSimpleName();
         }
         return t;
+    }
+
+    public static void e(String format, Object... params) {
+        e(String.format(Locale.CHINA, format, params));
     }
 }

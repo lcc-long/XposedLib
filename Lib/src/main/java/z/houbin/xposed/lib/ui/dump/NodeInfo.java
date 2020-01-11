@@ -59,9 +59,21 @@ public class NodeInfo {
      */
     private Rect bounds;
     /**
+     * 深度
+     */
+    private String deep;
+    /**
      * 子节点列表
      */
     private List<NodeInfo> childList = new ArrayList<>();
+
+    public String getDeep() {
+        return deep;
+    }
+
+    public void setDeep(String deep) {
+        this.deep = deep;
+    }
 
     public String getActivity() {
         return activity;
@@ -161,11 +173,12 @@ public class NodeInfo {
         try {
             json.put("id", (id == null) ? "" : id);
             json.put("idInt", "" + idInt);
-            json.put("className", "" + className);
-            json.put("superClassName", "" + superClassName);
+            json.put("class", "" + className);
+            json.put("superClass", "" + superClassName);
             json.put("text", (text == null) ? "" : text);
             json.put("desc", (desc == null) ? "" : desc);
             json.put("visibility", "" + visibility);
+            json.put("deep", "" + deep);
             if (bounds != null) {
                 json.put("bounds", String.format(Locale.CHINA, "%d,%d,%d,%d", bounds.left, bounds.top, bounds.right, bounds.bottom));
                 json.put("center", bounds.centerX() + "," + bounds.centerY());
@@ -175,6 +188,9 @@ public class NodeInfo {
             }
             if (activity != null) {
                 json.put("activity", "" + activity);
+            }
+            if (packageName != null) {
+                json.put("package", "" + packageName);
             }
         } catch (JSONException e) {
             Logs.e(e);

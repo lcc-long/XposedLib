@@ -3,6 +3,8 @@ package z.houbin.xposed.lib.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import z.houbin.xposed.lib.log.Logs;
+
 /**
  * 数据库操作类
  *
