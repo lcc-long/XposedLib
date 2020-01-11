@@ -1,5 +1,6 @@
 package z.houbin.xposed.test;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
@@ -12,7 +13,7 @@ import z.houbin.xposed.lib.log.Logs;
 
 public class MainHook extends BaseHook {
     private static final String LOCALE_PACKAGE = "z.houbin.xposed.test";
-    public static final String TARGET_PACKAGE = "com.dingriwangeud9.asb";
+    public static final String TARGET_PACKAGE = "com.tencent.mobileqq";
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
@@ -37,5 +38,11 @@ public class MainHook extends BaseHook {
                 dispatchAttach(context);
             }
         });
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+        super.onActivityResumed(activity);
+        Logs.e("onActivityResumed ----------- ", activity.getLocalClassName());
     }
 }

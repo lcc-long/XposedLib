@@ -11,7 +11,7 @@ android {
         versionCode 29
         versionName "2.9"
         //21:修复文件追加第一行直接覆盖的情况
-        //28:增加UIDump
+        //29:增加UIDump
     }
 
     buildTypes {
@@ -24,7 +24,7 @@ android {
 }
 
 dependencies {
-    compileOnly files('libs/api-82.jar')
+    compileOnly  'de.robv.android.xposed:api:82'
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation files('libs/lite-orm-1.9.2.jar')
