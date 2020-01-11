@@ -34,14 +34,11 @@ public class MainActivity extends AppCompatActivity {
         Config.writeLog("4");
         Config.writeLog("5");
 
-        Logs.i("Log", Config.readLog());
-
         String[] req = new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS};
         Permissions.requestPermissions(this, req, 0);
 
         ConfigEditText configEditText = findViewById(R.id.configEt);
-        configEditText.setKey("config.url");
-        configEditText.setup();
+        configEditText.setup("config.url");
         Logs.e(configEditText.getValue());
     }
 
