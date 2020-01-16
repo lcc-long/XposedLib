@@ -61,6 +61,7 @@ public class Logs {
             method.getName();
 
             Object[] params = param.args;
+            //参数
             for (int i = 0; i < params.length; i++) {
                 builder.append("p").append(i);
                 builder.append(":");
@@ -71,13 +72,28 @@ public class Logs {
                     builder.append("(");
                     builder.append(p.getClass().getName());
                     builder.append(")");
-                    if(p.getClass().isArray()){
+                    if (p.getClass().isArray()) {
                         builder.append(Arrays.toString((Object[]) p));
-                    }else{
+                    } else {
                         builder.append(p.toString());
                     }
                 }
                 builder.append(",");
+            }
+            //返回值
+            builder.append("-->");
+            Object result = param.getResult();
+            if (result == null) {
+                builder.append("null");
+            } else {
+                builder.append("(");
+                builder.append(result.getClass().getName());
+                builder.append(")");
+                if (result.getClass().isArray()) {
+                    builder.append(Arrays.toString((Object[]) result));
+                } else {
+                    builder.append(result.toString());
+                }
             }
         } catch (Exception e) {
             e(e);
