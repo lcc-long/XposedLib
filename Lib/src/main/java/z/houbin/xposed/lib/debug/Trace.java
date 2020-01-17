@@ -7,13 +7,46 @@ import java.util.List;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import z.houbin.xposed.lib.log.Logs;
+import z.houbin.xposed.lib.printer.MethodPrinter;
 
 /**
- * 类调用最终
+ * 类调用追踪
  *
  * @author z.houbin
  */
 public class Trace {
+
+    /**
+     * 仅输出指定类
+     *
+     * @param cls          类
+     * @param debugListner 回调
+     */
+    public static void traceOn(Class cls, DebugListner debugListner) {
+        Logs.e("Trace Class " + cls);
+        if (cls == null || debugListner == null) {
+            return;
+        }
+        List<String> methodNames = new ArrayList<>();
+        Method[] declaredMethods = cls.getDeclaredMethods();
+        for (Method method : declaredMethods) {
+            if (!methodNames.contains(method.getName()) && debugListner.isDebug(method.getName())) {
+                methodNames.add(method.getName());
+            }
+        }
+        declaredMethods = cls.getMethods();
+        for (Method method : declaredMethods) {
+            if (!methodNames.contains(method.getName()) && debugListner.isDebug(method.getName())) {
+                methodNames.add(method.getName());
+            }
+        }
+        DebugMethod debugMethod = new DebugMethod(cls, debugListner);
+        for (String name : methodNames) {
+            XposedBridge.hookAllMethods(cls, name, debugMethod);
+        }
+        XposedBridge.hookAllConstructors(cls, debugMethod);
+    }
+
     /**
      * 追踪类函数调用,不输出日志
      *
@@ -114,7 +147,7 @@ public class Trace {
                 String clsName = param.thisObject.getClass().getName();
                 String methodName = param.method.getName();
                 try {
-                    Logs.printMethodParam(clsName + "--(" + methodName + ") ", param);
+                    new MethodPrinter(param).print("afterHookedMethod");
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }
@@ -123,7 +156,7 @@ public class Trace {
                 String clsName = cls.getName();
                 String methodName = param.method.getName();
                 try {
-                    Logs.printMethodParam(clsName + "-->(" + methodName + ") ", param);
+                    new MethodPrinter(param).print("afterHookedMethod static");
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }

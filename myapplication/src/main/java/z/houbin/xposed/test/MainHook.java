@@ -10,6 +10,7 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import z.houbin.xposed.lib.hot.BaseHook;
 import z.houbin.xposed.lib.log.Logs;
+import z.houbin.xposed.lib.printer.MethodPrinter;
 
 public class MainHook extends BaseHook {
     private static final String LOCALE_PACKAGE = "z.houbin.xposed.test";
@@ -31,7 +32,7 @@ public class MainHook extends BaseHook {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
-                Logs.printMethodParam("attach", param);
+                new MethodPrinter(param).print("Application.attach");
 
                 Application context = (Application) param.thisObject;
 

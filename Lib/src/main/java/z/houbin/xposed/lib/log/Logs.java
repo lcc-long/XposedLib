@@ -15,6 +15,7 @@ import z.houbin.xposed.lib.database.SqliteHelper;
 
 /**
  * 日志工具
+ * @author z.houbin
  */
 public class Logs {
     public static String TAG = "Xposed.Lib";
@@ -48,119 +49,6 @@ public class Logs {
     }
 
     /**
-     * 打印函数参数
-     *
-     * @param tag   标签
-     * @param param 参数
-     */
-    public static void printMethodParam(String tag, XC_MethodHook.MethodHookParam param) {
-        StringBuilder builder = new StringBuilder(tag);
-        builder.append(" ");
-        try {
-            Member method = param.method;
-            method.getName();
-
-            Object[] params = param.args;
-            //参数
-            for (int i = 0; i < params.length; i++) {
-                builder.append("p").append(i);
-                builder.append(":");
-                Object p = params[i];
-                if (p == null) {
-                    builder.append("null");
-                } else {
-                    builder.append("(");
-                    builder.append(p.getClass().getName());
-                    builder.append(")");
-                    if (p.getClass().isArray()) {
-                        builder.append(Arrays.toString((Object[]) p));
-                    } else {
-                        builder.append(p.toString());
-                    }
-                }
-                builder.append(",");
-            }
-            //返回值
-            builder.append("-->");
-            Object result = param.getResult();
-            if (result == null) {
-                builder.append("null");
-            } else {
-                builder.append("(");
-                builder.append(result.getClass().getName());
-                builder.append(")");
-                if (result.getClass().isArray()) {
-                    builder.append(Arrays.toString((Object[]) result));
-                } else {
-                    builder.append(result.toString());
-                }
-            }
-        } catch (Exception e) {
-            e(e);
-        }
-        Logs.e(builder.toString());
-    }
-
-    /**
-     * 打印成员
-     *
-     * @param obj 对象
-     */
-    public static void printField(Object obj) {
-        StringBuilder builder = new StringBuilder("\r\n");
-        try {
-            Class cls = obj.getClass();
-            Field[] fields = cls.getFields();
-            for (int i = 0; i < fields.length; i++) {
-                Field field = fields[i];
-                // 对于每个属性，获取属性名
-                String varName = field.getName();
-                try {
-                    boolean access = field.isAccessible();
-                    if (!access) {
-                        field.setAccessible(true);
-                    }
-
-                    //从obj中获取field变量
-                    Object o = field.get(obj);
-                    builder.append("变量： ").append(varName).append(" = ");
-                    builder.append(getLog(o));
-                    builder.append("\r\n");
-                    if (!access) {
-                        field.setAccessible(false);
-                    }
-                } catch (Exception ex) {
-                    e(ex);
-                }
-            }
-
-            //函数
-            Method[] methods = cls.getMethods();
-            for (Method method : methods) {
-                // 对于每个属性，获取属性名
-                //得到方法的返回值类型的类类型
-                builder.append("\r\n");
-                Class returnType = method.getReturnType();
-                builder.append(returnType.getName());
-                builder.append("  ");
-                //得到方法的名称
-                builder.append(method.getName());
-                builder.append("(");
-                //获取参数类型--->得到的是参数列表的类型的类类型
-                Class[] paramTypes = method.getParameterTypes();
-                for (Class class1 : paramTypes) {
-                    builder.append(class1.getName());
-                    builder.append(",");
-                }
-                builder.append(")");
-            }
-            Logs.e(cls.getName() + " method " + builder.toString());
-        } catch (Exception e) {
-            e(e);
-        }
-    }
-
-    /**
      * 打印当前堆栈信息
      */
     public static void printStackTrace() {
@@ -183,7 +71,7 @@ public class Logs {
         Logs.e(getTag(tag), getLog(log));
     }
 
-    private static String getLog(Object log) {
+    public static String getLog(Object log) {
         StringBuilder builder = new StringBuilder();
         if (log instanceof Bundle) {
             builder.append(getBundleLog((Bundle) log));

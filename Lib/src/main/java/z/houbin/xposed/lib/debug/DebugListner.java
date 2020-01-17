@@ -18,21 +18,29 @@ public class DebugListner {
         }
     }
 
-    public void onMethodBefore(XC_MethodHook.MethodHookParam method) {
+    void onMethodBefore(XC_MethodHook.MethodHookParam method) {
 
     }
 
-    public void onMethodAfter(XC_MethodHook.MethodHookParam method) {
+    void onMethodAfter(XC_MethodHook.MethodHookParam method) {
 
     }
 
-    public boolean isDebug(XC_MethodHook.MethodHookParam method) {
+    boolean isDebug(XC_MethodHook.MethodHookParam method) {
         boolean match = false;
         if (method != null) {
             String methodName = method.method.getName();
             if (method.method instanceof Constructor) {
                 methodName = "init";
             }
+            match = methodNames.contains(methodName);
+        }
+        return match;
+    }
+
+    boolean isDebug(String methodName) {
+        boolean match = false;
+        if (methodName != null) {
             match = methodNames.contains(methodName);
         }
         return match;
