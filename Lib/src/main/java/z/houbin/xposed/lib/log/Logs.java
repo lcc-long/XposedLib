@@ -123,7 +123,8 @@ public class Logs {
 
                     //从obj中获取field变量
                     Object o = field.get(obj);
-                    builder.append("变量： " + varName + " = " + o);
+                    builder.append("变量： ").append(varName).append(" = ");
+                    builder.append(getLog(o));
                     builder.append("\r\n");
                     if (!access) {
                         field.setAccessible(false);
@@ -157,7 +158,6 @@ public class Logs {
         } catch (Exception e) {
             e(e);
         }
-        Logs.e(builder.toString());
     }
 
     /**
