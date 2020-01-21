@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import z.houbin.xposed.lib.Config;
+import z.houbin.xposed.lib.config.Config;
 import z.houbin.xposed.lib.permission.Permissions;
 import z.houbin.xposed.lib.R;
 
@@ -38,7 +38,7 @@ public class LogActivity extends AppCompatActivity {
 
     private void loadLogs() {
         TextView log = findViewById(R.id.log);
-        log.setText(Config.readLog());
+        log.setText(Config.getInstance(getApplicationContext()).getString("log",""));
     }
 
     @Override

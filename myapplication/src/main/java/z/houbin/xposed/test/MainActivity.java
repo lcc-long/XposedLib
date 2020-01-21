@@ -1,8 +1,9 @@
 package z.houbin.xposed.test;
 
 import android.Manifest;
-import android.content.Intent;
-import android.graphics.PixelFormat;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,10 +11,15 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-import z.houbin.xposed.lib.Config;
+import org.json.JSONObject;
+
+import java.io.File;
+
+import z.houbin.xposed.lib.config.Config;
+import z.houbin.xposed.lib.config.JSONSharedPreferences;
+import z.houbin.xposed.lib.config.XConfig;
 import z.houbin.xposed.lib.permission.Permissions;
 import z.houbin.xposed.lib.XposedUtil;
-import z.houbin.xposed.lib.log.LogActivity;
 import z.houbin.xposed.lib.log.Logs;
 import z.houbin.xposed.lib.ui.ConfigEditText;
 import z.houbin.xposed.lib.ui.FloatManager;
@@ -26,20 +32,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Config.init(MainHook.TARGET_PACKAGE);
-
-        Config.writeLog("1");
-        Config.writeLog("2");
-        Config.writeLog("3");
-        Config.writeLog("4");
-        Config.writeLog("5");
-
         String[] req = new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS};
         Permissions.requestPermissions(this, req, 0);
 
         ConfigEditText configEditText = findViewById(R.id.configEt);
         configEditText.setup("config.url");
         Logs.e(configEditText.getValue());
+
+        JSONSharedPreferences sharedPreferences = new JSONSharedPreferences(new File(getExternalFilesDir(null), "config.json"));
+        sharedPreferences.edit().putString("p0", "ppppppppppppp").apply();
+        Logs.e("sss", sharedPreferences.makeWorldReadable());
+
+        Logs.e(sharedPreferences.getString("p0","xxxxxx"));
     }
 
     public void check(View view) {
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     public void logs(View view) {
         //startActivity(new Intent(getApplicationContext(), LogActivity.class));
         String s = ViewHelper.getDepthString(view, 50);
-        Logs.e(""+s);
+        Logs.e("" + s);
     }
 
     public void dialog(View view) {

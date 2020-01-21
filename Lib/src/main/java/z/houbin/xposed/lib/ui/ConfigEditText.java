@@ -6,7 +6,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-import z.houbin.xposed.lib.Config;
+import z.houbin.xposed.lib.config.Config;
 import z.houbin.xposed.lib.log.Logs;
 
 /**
@@ -15,8 +15,6 @@ import z.houbin.xposed.lib.log.Logs;
  * @author z.houbin
  */
 public class ConfigEditText extends EditText {
-    private String key;
-
     public ConfigEditText(Context context) {
         super(context);
     }
@@ -29,21 +27,14 @@ public class ConfigEditText extends EditText {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public String getValue() {
         return getText().toString();
     }
 
-    public void setup(String key) {
-        setKey(key);
-        if (Config.isInit) {
-            String data = Config.read(key);
-            if (data.length() != 0) {
-                setText(data);
-            }
+    public void setup(final String key) {
+        String data = Config.getInstance(getContext()).getString(key, null);
+        if (data != null) {
+            setText(data);
         }
 
         addTextChangedListener(new TextWatcher() {
@@ -60,7 +51,7 @@ public class ConfigEditText extends EditText {
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    Config.save(ConfigEditText.this.key, s.toString());
+                    Config.getInstance(getContext()).put(key, s.toString());
                 } catch (Exception e) {
                     Logs.e(e);
                 }
