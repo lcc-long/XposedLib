@@ -147,7 +147,7 @@ public class Trace {
                 String clsName = param.thisObject.getClass().getName();
                 String methodName = param.method.getName();
                 try {
-                    new MethodPrinter(param).print("afterHookedMethod");
+                    new MethodPrinter(param).print(clsName + "(" + methodName + ")");
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }
@@ -156,7 +156,7 @@ public class Trace {
                 String clsName = cls.getName();
                 String methodName = param.method.getName();
                 try {
-                    new MethodPrinter(param).print("afterHookedMethod static");
+                    new MethodPrinter(param).print(clsName + "(static:" + methodName + ")");
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }

@@ -65,6 +65,37 @@ public class XposedUtil {
      * @param context 上下文
      * @return true 主进程
      */
+    public static String getProcessName(Context context) {
+        try {
+            int pid = Process.myPid();
+            ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            if (activityManager == null) {
+                return "";
+            }
+            List list = activityManager.getRunningAppProcesses();
+            for (Object o : list) {
+                ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (o);
+                try {
+                    if (info.pid == pid) {
+                        // 根据进程的信息获取当前进程的名字
+                        return info.processName;
+                    }
+                } catch (Exception e) {
+                    Logs.e(e);
+                }
+            }
+        } catch (Exception e) {
+            Logs.e(e);
+        }
+        return "";
+    }
+
+    /**
+     * 判断是否主进程
+     *
+     * @param context 上下文
+     * @return true 主进程
+     */
     public static boolean isMainProcess(Context context) {
         try {
             int pid = Process.myPid();
