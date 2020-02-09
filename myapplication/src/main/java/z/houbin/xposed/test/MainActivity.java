@@ -1,23 +1,16 @@
 package z.houbin.xposed.test;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
 import java.io.File;
 
-import z.houbin.xposed.lib.config.Config;
 import z.houbin.xposed.lib.config.JSONSharedPreferences;
-import z.houbin.xposed.lib.config.XConfig;
 import z.houbin.xposed.lib.permission.Permissions;
 import z.houbin.xposed.lib.XposedUtil;
 import z.houbin.xposed.lib.log.Logs;

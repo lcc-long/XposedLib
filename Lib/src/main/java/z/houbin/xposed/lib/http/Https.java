@@ -43,6 +43,26 @@ public class Https {
     }
 
     /**
+     * map 转字符串参数
+     *
+     * @param params 参数map
+     */
+    public static String mapToParams(HashMap<String, String> params) {
+        StringBuilder builder = new StringBuilder();
+        if (!params.isEmpty()) {
+            for (String k : params.keySet()) {
+                String v = params.get(k);
+                builder.append(k);
+                builder.append("=");
+                builder.append(v);
+                builder.append("&");
+            }
+        }
+        builder.deleteCharAt(builder.length() - 1);
+        return builder.toString();
+    }
+
+    /**
      * 向指定URL发送GET方法的请求
      *
      * @param url    发送请求的URL
@@ -60,12 +80,7 @@ public class Https {
                 urlNameString = new StringBuilder(url + "?");
             }
             if (params != null) {
-                for (String key : params.keySet()) {
-                    String value = params.get(key);
-                    urlNameString.append(key);
-                    urlNameString.append("&");
-                    urlNameString.append(value);
-                }
+                urlNameString.append(mapToParams(params));
             }
             URL realUrl = new URL(urlNameString.toString());
             // 打开和URL之间的连接
