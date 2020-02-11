@@ -129,7 +129,7 @@ public class JSONSharedPreferences implements SharedPreferences {
 
         String prefData = Files.readFile(mFile);
 
-        if (TextUtils.isEmpty(prefData)) {
+        if (!TextUtils.isEmpty(prefData)) {
             JSONObject json = null;
             try {
                 json = new JSONObject(prefData);
