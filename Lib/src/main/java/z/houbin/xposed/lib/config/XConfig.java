@@ -20,7 +20,6 @@ public class XConfig extends BaseConfig {
 
     private XConfig(String packageName) {
         jsonSharedPreferences = new JSONSharedPreferences(new File(dir, packageName));
-        jsonSharedPreferences.makeWorldReadable();
         super.sharedPreferences = jsonSharedPreferences;
     }
 
