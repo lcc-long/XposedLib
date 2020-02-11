@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 46
-        versionName "4.6"
+        versionCode 47
+        versionName "4.7"
         //21:修复文件追加第一行直接覆盖的情况
         //29:增加UIDump
         //30:增加悬浮窗
