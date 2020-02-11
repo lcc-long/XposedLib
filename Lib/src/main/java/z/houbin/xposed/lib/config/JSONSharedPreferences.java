@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -21,8 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import de.robv.android.xposed.SELinuxHelper;
-import de.robv.android.xposed.services.FileResult;
 import z.houbin.xposed.lib.file.Files;
 import z.houbin.xposed.lib.log.Logs;
 
@@ -44,6 +44,7 @@ public class JSONSharedPreferences implements SharedPreferences {
      * @param prefFile The file to read the preferences from.
      */
     public JSONSharedPreferences(File prefFile) {
+        Files.makeParent(prefFile);
         mFile = prefFile;
         mFilename = mFile.getAbsolutePath();
         startLoadFromDisk();
@@ -169,12 +170,9 @@ public class JSONSharedPreferences implements SharedPreferences {
      */
     public synchronized boolean hasFileChanged() {
         try {
-            FileResult result = SELinuxHelper.getAppDataFileService().statFile(mFilename);
-            return mLastModified != result.mtime || mFileSize != result.size;
-        } catch (FileNotFoundException ignored) {
-            // SharedPreferencesImpl doesn't log anything in case the file doesn't exist
-            return true;
-        } catch (IOException e) {
+            return mLastModified != mFile.lastModified();
+            //FileResult result = SELinuxHelper.getAppDataFileService().statFile(mFilename);
+        } catch (Exception e) {
             Log.w(TAG, "hasFileChanged", e);
             return true;
         }
