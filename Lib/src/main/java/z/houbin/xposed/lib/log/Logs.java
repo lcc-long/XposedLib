@@ -4,40 +4,50 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Locale;
 
-import de.robv.android.xposed.XC_MethodHook;
 import z.houbin.xposed.lib.database.SqliteHelper;
 
 /**
  * 日志工具
+ *
  * @author z.houbin
  */
 public class Logs {
-    public static String TAG = "Xposed.Lib";
+    private static String TAG = "Xposed.Lib";
+
+    private static boolean isDebug;
+
+    public static void setStatus(boolean debug) {
+        isDebug = debug;
+    }
 
     public static void init(String t) {
         TAG = t + " ";
     }
 
     public static void e(String text) {
-        Log.e(TAG, text);
+        if (isDebug) {
+            Log.e(TAG, text);
+        }
     }
 
     public static void e(String tag, String text) {
-        Log.e(TAG + " - " + tag, text);
+        if (isDebug) {
+            Log.e(TAG + " - " + tag, text);
+        }
     }
 
     public static void e(Object cls, String log) {
-        Logs.e(cls.getClass().getName(), log);
+        if (isDebug) {
+            Logs.e(cls.getClass().getName(), log);
+        }
     }
 
     public static void e(Class cls, String log) {
-        Logs.e(cls.getName(), log);
+        if (isDebug) {
+            Logs.e(cls.getName(), log);
+        }
     }
 
     public static void e(Throwable e) {
@@ -64,11 +74,15 @@ public class Logs {
                     , trace.getMethodName()
                     , trace.getLineNumber()));
         }
-        Logs.e("StackTrace \r\n" + builder.toString());
+        if (isDebug) {
+            Logs.e("StackTrace \r\n" + builder.toString());
+        }
     }
 
     public static void e(Object tag, Object log) {
-        Logs.e(getTag(tag), getLog(log));
+        if (isDebug) {
+            Logs.e(getTag(tag), getLog(log));
+        }
     }
 
     public static String getLog(Object log) {
