@@ -24,8 +24,7 @@ public class MethodPrinter implements BasePrinter {
         builder.append(" ");
         try {
             Member method = params.method;
-            method.getName();
-
+            builder.append("(").append(method.getName()).append(")");
             Object[] params = this.params.args;
             //参数
             for (int i = 0; i < params.length; i++) {
@@ -39,7 +38,13 @@ public class MethodPrinter implements BasePrinter {
                     builder.append(p.getClass().getName());
                     builder.append(")");
                     if (p.getClass().isArray()) {
-                        builder.append(Arrays.toString((Object[]) p));
+                        try {
+                            builder.append(Arrays.toString((Object[]) p));
+                        } catch (Exception e) {
+                            // e.printStackTrace();
+                        }finally {
+                            builder.append(p.toString());
+                        }
                     } else {
                         builder.append(p.toString());
                     }
